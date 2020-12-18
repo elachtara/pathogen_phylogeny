@@ -33,9 +33,11 @@ Jaccard (1912),
 
 - Proportion of target plant species that developed disease symptoms after inoculation with fungal pathogens from source plant species
 
-- Host geographical range overlap index ?
+- Host geographical range overlap index?
 
 - regressed $\beta_j$ against host relatedness and one of the two measures of geographical overlap.
 
 - construct super tree to get host relatedness?
+
+
 
