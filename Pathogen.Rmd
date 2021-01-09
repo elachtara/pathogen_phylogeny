@@ -1,18 +1,116 @@
 ---
 title: "Pathogen"
 author: "Emily M. Lachtara"
-output: html_document
+output:
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(readxl)
 library(janitor)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(kableExtra)
+library(leaflet)
+library(leaps)
+library(maptools)
+library(maps)
+
+# Define color pallette
+mypal <- cbind(palette(RColorBrewer::brewer.pal(n = 8, name = "Set2")),
+               palette(RColorBrewer::brewer.pal(n = 12, name = "Paired")))
 ```
 
-
-```{r Read in}
-fam1 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet1") %>% clean_names()
-fam2 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet2")
-fam3 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet3")
+```{r Data Read In, echo =  FALSE}
+# Read in Data
+fam1 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet1") %>% clean_names() %>% mutate(Fam = "Pinks")
+fam2 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet2") %>% clean_names() %>% mutate(Fam = "Amaranthaceae")
+fam3 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet3") %>% clean_names() %>% mutate(Fam = "Buckwheats")
+all_fams <- rbind(fam1, fam2, fam3)
 ```
+
+```{r Initial, echo =  FALSE, warning = FALSE}
+# Total observations per family
+all_fams %>% group_by(Fam) %>% 
+  count() %>% 
+  rename('Total' = n) %>%
+  kable(caption = "Total observations per family") %>% 
+  kable_classic(full_width = F, html_font = "Cambria")
+
+# Unique Hosts and Pathogens
+hosts <- all_fams %>% select(Fam, host) %>%
+  unique() %>% 
+  group_by(Fam) %>% 
+  count() %>% 
+  rename('Hosts' = n)
+pathogens <- all_fams %>% select(Fam, sci_name) %>% 
+  unique() %>% 
+  group_by(Fam) %>% 
+  count() %>% 
+  rename('Pathogens' = n) 
+
+# Plot of host and pathogen numbers by Family
+cbind(hosts, pathogens[,2]) %>% gather(key = 'Type', value = 'Value', 2:3)  %>%
+  ggplot(aes(x = Fam, y = Value, fill = Type)) +
+  geom_col(position = "dodge")+
+  scale_fill_manual(values = mypal[4:5])+
+  theme_minimal()+
+  labs(y = "Count", x = "Family", fill = "")+
+  labs(title = "Number of unique hosts and pathogens by Family")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "bottom")
+
+# Plot of literature effort by Family
+ggplot(all_fams, aes(x = as.numeric(litnum), col = Fam))+
+  geom_density()+
+  scale_colour_manual(values = mypal[4:6])+
+  theme_minimal()+
+  labs(y = "Count", x = "Literature Effort", col = "")+
+  labs(title = "Distribution of literature effort by Family")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "bottom")
+
+# Geographic Distribution
+states_merged <- all_fams %>% filter(country == 'United States') %>%
+  group_by(Fam, state_province) %>% count() 
+states <- datasets::state.name
+states_merged <- states_merged %>% filter(state_province %in% states) %>% spread(key = Fam, value = n) 
+states_merged[is.na(states_merged)] <- 0
+states_merged <- states_merged %>%
+  mutate(Avg = mean(Amaranthaceae, Buckwheats, Pinks)) %>% 
+  dplyr::rename(names = 'state_province') %>%
+  mutate(names = tolower(names))
+                
+
+# Color Palette
+pal <- colorNumeric("Blues", domain = states_merged$meanlife)
+
+mapStates = map("state", fill = TRUE, plot = FALSE)
+leaflet(data = mapStates) %>% addTiles() %>%
+  addPolygons(data = states_merged, 
+              fillColor = ~pal(states_merged$Avg), 
+              fillOpacity = 0.7, 
+              weight = 0.2, 
+              smoothFactor = 0.2, 
+              popup = paste("Pinks:", states_merged$Pinks, "<br>",
+                           "Amaranthaceae:", states_merged$Amaranthaceae, "<br>",
+                           "Buckwheats:", states_merged$Buckwheats)) %>%
+  addLegend(pal = pal, 
+            values = states_merged$Avg, 
+            position = "bottomright", 
+            title = "Average Observations")
+
+
+
+```
+
