@@ -1,0 +1,18 @@
+---
+title: "Pathogen"
+author: "Emily M. Lachtara"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readxl)
+library(janitor)
+```
+
+
+```{r Read in}
+fam1 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet1") %>% clean_names()
+fam2 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet2")
+fam3 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet3")
+```
