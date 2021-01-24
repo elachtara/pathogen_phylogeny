@@ -1,7 +1,8 @@
 
-data = fam2
-
-get_sharing <- function(data){
+# Function to compute sharing index across species
+get_sharing <- function(data, path_to_save){
+  
+# Initiate for storage
 sharing <- matrix(NA, nrow = 0, ncol = 3) %>% as.data.frame()
 colnames(sharing) <- c('org1', 'org2', 'percent')
 
@@ -33,8 +34,8 @@ for(i in 1:length(unique(data$host))){
     
     # Bind together this comparison with all comparisons
     temp <- cbind(org1, org2, percent)
-    sharing <- rbind(sharing, temp)
+    sharing <- rbind(sharing, temp) %>% mutate(percent = as.numeric(percent))
   }
 }
-return(sharing)
+save(sharing, file = path_to_save)
 }

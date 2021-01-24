@@ -12,11 +12,9 @@ library(dplyr)
 library(ggplot2)
 library(tidyr)
 library(kableExtra)
-library(leaflet)
-library(leaps)
-library(maptools)
-library(maps)
-library(tigris)
+
+
+source('functions/Sharing_index.R')
 
 # Define color pallette
 mypal <- cbind(palette(RColorBrewer::brewer.pal(n = 8, name = "Set2")),
@@ -29,6 +27,36 @@ fam1 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet1") %>% clean_names() 
 fam2 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet2") %>% clean_names() %>% mutate(Fam = "Amaranthaceae")
 fam3 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet3") %>% clean_names() %>% mutate(Fam = "Buckwheats")
 all_fams <- rbind(fam1, fam2, fam3)
+```
+
+```{r Synonymy Correction}
+
+```
+
+```{r Create pathogen sharing}
+get_sharing(data = all_fams, path_to_save = "data/all_fams.rda")
+get_sharing(data = fam1, path_to_save = "data/fam1.rda")
+get_sharing(data = fam2, path_to_save = "data/fam2.rda")
+get_sharing(data = fam3, path_to_save = "data/fam3.rda")
+```
+
+```{r Visualize pathogen sharing}
+sharing %>%
+  mutate(percent = as.numeric(percent)) %>%
+  filter(percent > 0) %>%
+  ggplot(aes(x = percent))+
+  geom_density(col = mypal[8])+
+  theme_minimal()+
+  labs(y = "Count", x = "% of Pathogens Shared")+
+  labs(title = "Nonzero distribution of host-pathogen sharing index")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "none")
+
+sharing %>% group_by(org1) %>% summarize(n = mean(as.numeric(percent))) %>% arrange(desc(n))
 ```
 
 ```{r Initial, echo =  FALSE, warning = FALSE}
@@ -82,82 +110,4 @@ ggplot(all_fams, aes(x = as.numeric(litnum), col = Fam))+
 ```
 
 
-```{r State Map, echo =  FALSE, warning = FALSE, message = FALSE}
-# Get state data
-states <- tigris::states(cb=T)
 
-# Geographic Distribution
-states_merged <- all_fams %>% filter(country == 'United States') %>%
-  group_by(Fam, state_province) %>% count() 
-states_merged <- states_merged %>% filter(state_province %in% states$NAME) %>% spread(key = Fam, value = n) 
-states_merged[is.na(states_merged)] <- 0
-states_merged <- states_merged %>% mutate(Avg = mean(Amaranthaceae, Buckwheats, Pinks))
-
-# Merge state files with characteristics
-states_merged_sb <- tigris::geo_join(states, states_merged, "NAME", "state_province")
-states_merged <- subset(states_merged_sb, !is.na(Avg))
-
-# Set up and print Map
-pal <- colorNumeric("Blues", domain = states_merged$meanlife)
-leaflet() %>%
-  addProviderTiles("CartoDB.Positron") %>%
-  setView(-98.483330, 38.712046, zoom = 3.5) %>% 
-  addPolygons(data = states_merged, 
-              fillColor = ~pal(states_merged$Avg), 
-              fillOpacity = 0.7, 
-              weight = 0.2, 
-              smoothFactor = 0.2, 
-              popup = paste("Pinks:", states_merged$Pinks, "<br>",
-                           "Amaranthaceae:", states_merged$Amaranthaceae, "<br>",
-                           "Buckwheats:", states_merged$Buckwheats)) %>%
-  addLegend(pal = pal, 
-            values = states_merged$Avg, 
-            position = "bottomright", 
-            title = "Average Observations")
-```
-
-
-```{r Country Map, echo =  FALSE, warning = FALSE}
-# Color Palette
-pal <- colorNumeric("Blues", domain = states_merged$meanlife)
-world_map <- map_data("world")
-names <- unique(world_map$region)
-
-
-# Geographic Distribution
-country_merged <- all_fams
-country_merged$country <- gsub('Indonesia, Java', 'Indonesia', country_merged$country)
-country_merged$country <- gsub('Italy, Sicily', 'Italy', country_merged$country)
-country_merged$country <- gsub('United States', 'USA', country_merged$country)
-country_merged$country <- gsub('Russia, Siberia', 'Russia', country_merged$country)
-country_merged$country <- gsub('Hong Kong', 'China', country_merged$country)
-country_merged <- country_merged %>%
-  group_by(Fam, country) %>% count() 
-
-id <- match(country_merged$country, names)
-fix <- country_merged$country[which(is.na(id))]
-
-country_merged <- country_merged %>% filter(country %in% world_map$region) %>% spread(key = Fam, value = n) 
-country_merged[is.na(country_merged)] <- 0
-country_merged <- country_merged %>% mutate(Avg = sum(Amaranthaceae, Buckwheats, Pinks)) %>% rename('region' = country)
-
-
-# Merge state files with characteristics
-country_merged_sb <- left_join(country_merged, world_map, by = "region")
-country_merged <- subset(country_merged_sb, !is.na(Avg))
-
-# Set up and print Map
-ggplot(country_merged, aes(long, lat, group = group))+
-  geom_polygon(aes(fill = Avg), color = "white")+
-  scale_fill_viridis_c(option = "C")+
-  theme_minimal()+
-  labs(col = "Number of Observations")+
-  labs(title = "Host-Pathogen Observations by country")+
-  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-        axis.title.y = element_text(size = 12, face = "bold"),
-        axis.title.x = element_text(size = 12, face = "bold"),
-        axis.text.x = element_text(size = 10),
-        axis.text.y = element_text(size = 10),
-        legend.position = "bottom")
-  
-```
