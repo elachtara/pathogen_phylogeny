@@ -56,7 +56,6 @@ sharing %>%
         axis.text.y = element_text(size = 10),
         legend.position = "none")
 
-sharing %>% group_by(org1) %>% summarize(n = mean(as.numeric(percent))) %>% arrange(desc(n))
 ```
 
 ```{r Initial, echo =  FALSE, warning = FALSE}
