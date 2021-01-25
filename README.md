@@ -26,6 +26,7 @@ https://www.rdocumentation.org/packages/phangorn/versions/2.5.5/topics/superTree
 
 - Jaccard index ($\beta_j$) pathogen sharing as an index of community similarity, measuring the difference in pathogen species composition between 2+ host species
 $$\beta_j = \frac{a}{a+b+c}$$
+
 Jaccard (1912),
 - a is the number of pathogen species found on two host species, X and Y
 - b is the number of pathogen species on host X that are not found on host Y

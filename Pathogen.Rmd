@@ -1,11 +1,13 @@
 ---
-title: "Pathogen Data Overview"
+title: "Host-Pathogen Sharing Workflow Data"
 author: "Emily M. Lachtara"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+# Load required packages
 library(readxl)
 library(janitor)
 library(dplyr)
@@ -14,7 +16,7 @@ library(tidyr)
 library(kableExtra)
 library(readxl)
 
-
+# Source the inhouse functions
 source('functions/Sharing_index.R')
 
 # Define color pallette
@@ -22,7 +24,7 @@ mypal <- cbind(palette(RColorBrewer::brewer.pal(n = 8, name = "Set2")),
                palette(RColorBrewer::brewer.pal(n = 12, name = "Paired")))
 ```
 
-```{r Data Read In, echo =  FALSE}
+```{r Data wrangle}
 # Read in Data
 fam1 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet1") %>% clean_names() %>% mutate(Fam = "Pinks")
 fam2 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet2") %>% clean_names() %>% mutate(Fam = "Amaranthaceae")
@@ -44,15 +46,19 @@ all_fams$sci_name <- fungi_key$new_name[id]
 rm(id)
 
 # Remove duplicate entries
-all_fams <- all_fams %>% select(sci_name, host) %>% distinct()
+clean_pathogen <- all_fams %>% select(sci_name, host) %>% distinct()
 
 # Save the cleaned/corrected data
-save(all_fams, file = "data/clean_pathogen.rda")
+save(clean_pathogen, file = "data/clean_pathogen.rda")
+```
 
+
+```{r Create Jaccard Index}
 # Load in clean data if needed
 load("data/clean_pathogen.rda")
-# Get pathogen sharing index
-get_sharing(data = all_fams, path_to_save = "data/sharing.rda")
+
+# Get pathogen sharing index (takes approximately 2 hours to run)
+get_sharing(data = clean_pathogen, path_to_save = "data/sharing.rda")
 ```
 
 ```{r Visualize pathogen sharing}

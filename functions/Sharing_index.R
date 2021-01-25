@@ -21,7 +21,7 @@ for(i in 1:length(unique(data$host))){
   
   # Pull the other organisms to compare
   others <- c(1:length(hostnames))
-  others <- others[-i]
+  others <- others[-c(1:i)]
 
   # Loop through the other organisms
   for(j in others){
