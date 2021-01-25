@@ -12,6 +12,7 @@ library(dplyr)
 library(ggplot2)
 library(tidyr)
 library(kableExtra)
+library(readxl)
 
 
 source('functions/Sharing_index.R')
@@ -27,17 +28,31 @@ fam1 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet1") %>% clean_names() 
 fam2 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet2") %>% clean_names() %>% mutate(Fam = "Amaranthaceae")
 fam3 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet3") %>% clean_names() %>% mutate(Fam = "Buckwheats")
 all_fams <- rbind(fam1, fam2, fam3)
-```
 
-```{r Synonymy Correction}
+# Synonymy Correction
+# Read in keys, replace raw name with new name
+# Plants name correction
+plants_key <- read_excel("data/key.xlsx", sheet = "plants")
+id <- match(all_fams$host, plants_key$raw_name)
+all_fams$host <- plants_key$new_name
+rm(id)
 
-```
+# Pathogen name correction
+fungi_key <- read_excel("data/key.xlsx", sheet = "fungi")
+id <- match(all_fams$sci_name, fungi_key$raw_name)
+all_fams$sci_name <- fungi_key$new_name[id]
+rm(id)
 
-```{r Create pathogen sharing}
-get_sharing(data = all_fams, path_to_save = "data/all_fams.rda")
-get_sharing(data = fam1, path_to_save = "data/fam1.rda")
-get_sharing(data = fam2, path_to_save = "data/fam2.rda")
-get_sharing(data = fam3, path_to_save = "data/fam3.rda")
+# Remove duplicate entries
+all_fams <- all_fams %>% select(sci_name, host) %>% distinct()
+
+# Save the cleaned/corrected data
+save(all_fams, file = "data/clean_pathogen.rda")
+
+# Load in clean data if needed
+load("data/clean_pathogen.rda")
+# Get pathogen sharing index
+get_sharing(data = all_fams, path_to_save = "data/sharing.rda")
 ```
 
 ```{r Visualize pathogen sharing}

@@ -6,9 +6,13 @@ get_sharing <- function(data, path_to_save){
 sharing <- matrix(NA, nrow = 0, ncol = 3) %>% as.data.frame()
 colnames(sharing) <- c('org1', 'org2', 'percent')
 
+
 # Function to parse through and create pathogen sharing index
 for(i in 1:length(unique(data$host))){
 
+  # We don't want to see the warnings
+  options(warn=-1)
+  
   # Hostnames 
   hostnames <- unique(data$host)
 
@@ -21,6 +25,11 @@ for(i in 1:length(unique(data$host))){
 
   # Loop through the other organisms
   for(j in others){
+    
+    # We don't want to see the warnings
+    options(warn=-1)
+    
+    # Organism to compare
     org2 <- hostnames[j]
     
     # Get total pathogens between them
@@ -36,6 +45,10 @@ for(i in 1:length(unique(data$host))){
     temp <- cbind(org1, org2, percent)
     sharing <- rbind(sharing, temp) %>% mutate(percent = as.numeric(percent))
   }
+  
+  # Print a progress report
+  percent_done <- round(i/length(hostnames), 3)
+  print(paste(percent_done, "complete", sep =" "))
 }
 save(sharing, file = path_to_save)
 }
