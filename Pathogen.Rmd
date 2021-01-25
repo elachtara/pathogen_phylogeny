@@ -53,7 +53,7 @@ save(clean_pathogen, file = "data/clean_pathogen.rda")
 ```
 
 
-```{r Create Jaccard Index}
+```{r Create Jaccard Index, messages = FALSE}
 # Load in clean data if needed
 load("data/clean_pathogen.rda")
 

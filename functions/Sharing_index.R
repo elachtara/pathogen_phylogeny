@@ -1,36 +1,25 @@
+load("data/clean_pathogen.rda")
+data = clean_pathogen
+path_to_save = "data/sharing.rda"
 
 # Function to compute sharing index across species
-get_sharing <- function(data, path_to_save){
-  
+#get_sharing <- function(data, path_to_save){
+
 # Initiate for storage
 sharing <- matrix(NA, nrow = 0, ncol = 3) %>% as.data.frame()
 colnames(sharing) <- c('org1', 'org2', 'percent')
 
+# All Hostnames 
+hostnames <- unique(data$host)
 
 # Function to parse through and create pathogen sharing index
-for(i in 1:length(unique(data$host))){
-
-  # We don't want to see the warnings
-  options(warn=-1)
-  
-  # Hostnames 
-  hostnames <- unique(data$host)
-
-  # Pull the organism of comparison
-  org1 <- hostnames[i]
+for(org1 in hostnames){
   
   # Pull the other organisms to compare
-  others <- c(1:length(hostnames))
-  others <- others[-c(1:i)]
+  others <- hostnames[-1]
 
   # Loop through the other organisms
-  for(j in others){
-    
-    # We don't want to see the warnings
-    options(warn=-1)
-    
-    # Organism to compare
-    org2 <- hostnames[j]
+  for(org2 in others){
     
     # Get total pathogens between them
     total <- data %>% filter(host == c(org1, org2)) %>% select(sci_name, host) %>% group_by(sci_name, host) %>% unique()
@@ -46,9 +35,14 @@ for(i in 1:length(unique(data$host))){
     sharing <- rbind(sharing, temp) %>% mutate(percent = as.numeric(percent))
   }
   
-  # Print a progress report
-  percent_done <- round(i/length(hostnames), 3)
-  print(paste(percent_done, "complete", sep =" "))
+  # Update hostnames, remove the one you just searched
+  hostnames <- others
+  
+  # Calculate total runs left 
+  left <- length(hostnames)
+  
+  print(paste("only", new, "to go!", sep= " "))
 }
+
 save(sharing, file = path_to_save)
-}
+#}
