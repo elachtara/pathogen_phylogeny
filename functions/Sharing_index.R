@@ -1,12 +1,13 @@
 load("data/clean_pathogen.rda")
-data = clean_pathogen
+data = clean_pathogen %>% distinct()
+rm(clean_pathogen)
 path_to_save = "data/sharing.rda"
 
 # Function to compute sharing index across species
 #get_sharing <- function(data, path_to_save){
 
 # Initiate for storage
-sharing <- matrix(NA, nrow = 0, ncol = 3) %>% as.data.frame()
+sharing <- matrix(NA, nrow = 0, ncol = 3)
 colnames(sharing) <- c('org1', 'org2', 'percent')
 
 # All Hostnames 
@@ -22,17 +23,35 @@ for(org1 in hostnames){
   for(org2 in others){
     
     # Get total pathogens between them
-    total <- data %>% filter(host == c(org1, org2)) %>% select(sci_name, host) %>% group_by(sci_name, host) %>% unique()
+    total <- data %>% filter(host == c(org1, org2)) %>% 
+      select(sci_name, host) %>% 
+      group_by(sci_name, host) %>%
+      unique() %>% nrow()
     
     # Get the number of shared pathogens
-    shared <- total %>% group_by(sci_name) %>% count() %>% filter(n > 1) 
+    shared <- data %>% 
+      filter(host == c(org1, org2)) %>% 
+      select(sci_name, host) %>% 
+      group_by(sci_name, host) %>%
+      unique() %>% 
+      group_by(sci_name) %>%
+      count() %>% 
+      filter(n > 1) %>%
+      nrow()
     
+    if(shared == 0){
+      # Dont add if nothing shared
+      tmp <- matrix(NA, nrow = 0, ncol = 3)
+      colnames(tmp) <- c('org1', 'org2', 'percent')
+    }else{
     # Get the percent shared between them
-    percent <- round(nrow(shared)/nrow(total), 3)
+    percent <- as.numeric(round((shared/total), 3))
     
     # Bind together this comparison with all comparisons
-    temp <- cbind(org1, org2, percent)
-    sharing <- rbind(sharing, temp) %>% mutate(percent = as.numeric(percent))
+    temp <- as.matrix(cbind(org1, org2, percent))
+    }
+    
+    sharing <- rbind(sharing, temp)
   }
   
   # Update hostnames, remove the one you just searched
@@ -41,7 +60,7 @@ for(org1 in hostnames){
   # Calculate total runs left 
   left <- length(hostnames)
   
-  print(paste("only", new, "to go!", sep= " "))
+  print(paste("only", left, "to go!", sep= " "))
 }
 
 save(sharing, file = path_to_save)
