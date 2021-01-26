@@ -16,9 +16,6 @@ library(tidyr)
 library(kableExtra)
 library(readxl)
 
-# Source the inhouse functions
-source('functions/Sharing_index.R')
-
 # Define color pallette
 mypal <- cbind(palette(RColorBrewer::brewer.pal(n = 8, name = "Set2")),
                palette(RColorBrewer::brewer.pal(n = 12, name = "Paired")))
@@ -52,8 +49,7 @@ clean_pathogen <- all_fams %>% select(sci_name, host) %>% distinct()
 save(clean_pathogen, file = "data/clean_pathogen.rda")
 ```
 
-
-```{r Create Jaccard Index, messages = FALSE}
+```{r Create Jaccard Index}
 # Load in clean data if needed
 load("data/clean_pathogen.rda")
 
@@ -62,7 +58,8 @@ get_sharing(data = clean_pathogen, path_to_save = "data/sharing.rda")
 ```
 
 ```{r Visualize pathogen sharing}
-sharing %>%
+load("data/clean_sharing.rda")
+p <- sharing_clean %>%
   mutate(percent = as.numeric(percent)) %>%
   filter(percent > 0) %>%
   ggplot(aes(x = percent))+
@@ -77,6 +74,12 @@ sharing %>%
         axis.text.y = element_text(size = 10),
         legend.position = "none")
 
+ggsave("figures/sharing.dis.pdf",
+       plot = p,
+       units = "in",
+       width = 8,
+       height = 5,
+       useDingbats = FALSE)
 ```
 
 ```{r Initial, echo =  FALSE, warning = FALSE}
