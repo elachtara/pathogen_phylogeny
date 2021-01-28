@@ -1,24 +1,25 @@
-#library(robotstxt)
-#library(purrr)
-#library(lubridate)
-#library(ggplot2)
-#library(tidyverse) 
-#library(rvest)
-#library(janitor)
-#library(xtable)
-#library(tinytex)
-#pacman::p_load(DT)
+library(wosr)
 
-install.packages("devtools")  # if required
-devtools::install_github("juba/rwos")
-library(rwos)
+# Load in data
+load("data/clean_pathogen.rda")
+data = clean_pathogen
 
-# Authentication to get a session id
-sid <- wos_authenticate()
+# All Hostnames 
+hostnames <- unique(data$host)
 
+# Authentication to get a session id - need user
+# https://cran.r-project.org/web/packages/wosr/wosr.pdf
+Sys.setenv(WOS_USERNAME = NULL, WOS_PASSWORD = NULL)
+sid <- auth(username = NULL,
+            password = NULL)
+# google scholar also restrict to title and abstract and keywords(not keywords plus)
+
+for(org in hostnames){
 # Use session id to run a query
 search_query <- paste("TI='", org, "' OR AB='", org, "' OR AK='", org, "'", sep = "")
 res <- wos_search(sid, search_query)
+}
+
 
 # Number of results
 pubs <- wos_retrieve_all(res)
@@ -30,7 +31,6 @@ pubs <- wos_retrieve_all(res)
 search_for <- paste("TI='", org, "' OR AB='", org, "' OR AK='", org, "'", sep = "")
 
 # Search for the element
-
 
 
 # loop over pages

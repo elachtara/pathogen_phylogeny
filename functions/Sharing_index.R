@@ -1,16 +1,16 @@
-load("data/clean_pathogen.rda")
+l# Load in data
+oad("data/clean_pathogen.rda")
 data = clean_pathogen %>% distinct()
 rm(clean_pathogen)
-path_to_save = "data/sharing.rda"
 
-# Function to compute sharing index across species
-#get_sharing <- function(data, path_to_save){
+# To compute sharing index across species
 
 # Initiate for storage
 sharing <- matrix(NA, nrow = 0, ncol = 3)
 colnames(sharing) <- c('org1', 'org2', 'percent')
 
 # All Hostnames 
+scinames <- unique(data$sci_name)
 hostnames <- unique(data$host)
 
 # Function to parse through and create pathogen sharing index
@@ -63,6 +63,6 @@ for(org1 in hostnames){
   print(paste("only", left, "to go!", sep= " "))
 }
 
-save(sharing, file = path_to_save)
+save(sharing, file = "data/sharing.rda")
 
-#}
+
