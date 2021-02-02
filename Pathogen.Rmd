@@ -33,7 +33,7 @@ all_fams <- rbind(fam1, fam2, fam3)
 # Plants name correction
 plants_key <- read_excel("data/key.xlsx", sheet = "plants")
 id <- match(all_fams$host, plants_key$raw_name)
-all_fams$host <- plants_key$new_name
+all_fams$host <- plants_key$new_name[id]
 rm(id)
 
 # Pathogen name correction
@@ -45,8 +45,17 @@ rm(id)
 # Remove duplicate entries
 clean_pathogen <- all_fams %>% select(sci_name, host) %>% distinct()
 
+# Split into families
+genus_pathogen <- clean_pathogen %>% separate(host, c('genus', 'species') , sep = " ") %>%
+  select(-species) %>% distinct()
+
+# Split into species, no genus
+species_pathogen <- clean_pathogen %>% filter(!grepl('sp.', host)) %>% distinct()
+
+
 # Save the cleaned/corrected data
-save(clean_pathogen, file = "data/clean_pathogen.rda")
+save(species_pathogen, genus_pathogen, file = "data/clean_pathogen.rda")
+
 ```
 
 ```{r Create Jaccard Index}
