@@ -1,55 +1,52 @@
-l# Load in data
-oad("data/clean_pathogen.rda")
-data = clean_pathogen %>% distinct()
-rm(clean_pathogen)
+# Load in data
 
-# To compute sharing index across species
-
-# Initiate for storage
-sharing <- matrix(NA, nrow = 0, ncol = 3)
-colnames(sharing) <- c('org1', 'org2', 'percent')
-
-# All Hostnames 
-scinames <- unique(data$sci_name)
-hostnames <- unique(data$host)
+# Function to get Jaccard index
+get_sharing <- function(data, path_to_save){
+  
+  # Initiate for storage
+  hostnames <- unique(data$host)
+  sharing <- matrix(NA, nrow = 0, ncol = 5)
+  colnames(sharing) <- c('org1', 'org2', 'org1.count', 'org2.count', 'shared')
+  
 
 # Function to parse through and create pathogen sharing index
 for(org1 in hostnames){
   
   # Pull the other organisms to compare
   others <- hostnames[-1]
-
+  
+  # How many for org1
+  org1.sci <- data %>% filter(host == org1) %>% 
+    select(sci_name, host) %>% 
+    group_by(sci_name) %>%
+    unique() 
+  org1.count <- nrow(org1.sci)
+  
   # Loop through the other organisms
   for(org2 in others){
     
-    # Get total pathogens between them
-    total <- data %>% filter(host == c(org1, org2)) %>% 
+    # How many for org2
+    org2.sci <- data %>% filter(host == org2) %>% 
       select(sci_name, host) %>% 
-      group_by(sci_name, host) %>%
-      unique() %>% nrow()
+      group_by(sci_name) %>%
+      unique()
+    org2.count <- nrow(org2.sci)
     
     # Get the number of shared pathogens
-    shared <- data %>% 
-      filter(host == c(org1, org2)) %>% 
-      select(sci_name, host) %>% 
-      group_by(sci_name, host) %>%
-      unique() %>% 
-      group_by(sci_name) %>%
-      count() %>% 
-      filter(n > 1) %>%
-      nrow()
-    
-    if(shared == 0){
+    shared <- length(Reduce(intersect, list(org1.sci$sci_name, org2.sci$sci_name)))
+   
+    #if(shared == NA){
       # Dont add if nothing shared
-      tmp <- matrix(NA, nrow = 0, ncol = 3)
-      colnames(tmp) <- c('org1', 'org2', 'percent')
-    }else{
+      #tmp <- matrix(NA, nrow = 0, ncol = 5)
+      #colnames(tmp) <- c('org1', 'org2', 'org1.count', 'org2.count', 'shared')
+    #}else{
+      
     # Get the percent shared between them
-    percent <- as.numeric(round((shared/total), 3))
+    #percent <- as.numeric(round((shared/total), 3))
     
     # Bind together this comparison with all comparisons
-    temp <- as.matrix(cbind(org1, org2, percent))
-    }
+    temp <- as.matrix(cbind(org1, org2, org1.count, org2.count, shared))
+    #}
     
     sharing <- rbind(sharing, temp)
   }
@@ -63,6 +60,9 @@ for(org1 in hostnames){
   print(paste("only", left, "to go!", sep= " "))
 }
 
-save(sharing, file = "data/sharing.rda")
+  # Save data
+  save(sharing, file = path_to_save)
+  
+}
 
 

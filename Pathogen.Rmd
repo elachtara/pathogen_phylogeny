@@ -46,12 +46,11 @@ rm(id)
 clean_pathogen <- all_fams %>% select(sci_name, host) %>% distinct()
 
 # Split into families
-genus_pathogen <- clean_pathogen %>% separate(host, c('genus', 'species') , sep = " ") %>%
+genus_pathogen <- clean_pathogen %>% separate(host, c('host', 'species') , sep = " ") %>%
   select(-species) %>% distinct()
 
 # Split into species, no genus
 species_pathogen <- clean_pathogen %>% filter(!grepl('sp.', host)) %>% distinct()
-
 
 # Save the cleaned/corrected data
 save(species_pathogen, genus_pathogen, file = "data/clean_pathogen.rda")
@@ -62,8 +61,9 @@ save(species_pathogen, genus_pathogen, file = "data/clean_pathogen.rda")
 # Load in clean data if needed
 load("data/clean_pathogen.rda")
 
-# Get pathogen sharing index (takes approximately 2 hours to run)
-get_sharing(data = clean_pathogen, path_to_save = "data/sharing.rda")
+# Get pathogen sharing index
+get_sharing(data = genus_pathogen, path_to_save = "data/genus.sharing.rda")
+get_sharing(data = species_pathogen, path_to_save = "data/species.sharing.rda")
 ```
 
 ```{r Visualize pathogen sharing}
