@@ -2,7 +2,7 @@ library(wosr)
 
 # Load in data
 load("data/clean_pathogen.rda")
-data = clean_pathogen
+data = genus_pathogen
 
 # All Hostnames 
 hostnames <- unique(data$host)
@@ -12,6 +12,7 @@ hostnames <- unique(data$host)
 Sys.setenv(WOS_USERNAME = NULL, WOS_PASSWORD = NULL)
 sid <- auth(username = NULL,
             password = NULL)
+
 # google scholar also restrict to title and abstract and keywords(not keywords plus)
 
 for(org in hostnames){
