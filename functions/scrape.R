@@ -4,7 +4,17 @@ library(dplyr)
 # Load in data
 load("data/species.sharing.rda")
 
-# All Hostnames 
+# for a small example
+data = as.data.frame(sharing)
+samp <- c('Silene baccifera' , 'Silene balansae', 'Silene behen', 'Silene bernardina', 'Silene brahuica', 'Silene bungei', 'Silene bupleuroides')
+hostdata = data %>% filter(org1 %in% samp) %>% filter(org2 %in% samp)
+org1 =  unique(hostdata$org1)
+citations = c(0, 0, 4, 2, 10, 3)
+citations = cbind(org1, citations) %>% as.data.frame()
+
+hostdata = full_join(hostdata, citations, by = "org1")
+
+save(hostdata, file = "data/example.rda")
 
 
 # Authentication to get a session id - need user
@@ -13,7 +23,6 @@ Sys.setenv(WOS_USERNAME = NULL, WOS_PASSWORD = NULL)
 sid <- auth(username = NULL,
             password = NULL)
 
-# google scholar also restrict to title and abstract and keywords(not keywords plus)
 
 for(org in hostnames){
 # Use session id to run a query
@@ -21,6 +30,8 @@ search_query <- paste("TI='", org, "' OR AB='", org, "' OR AK='", org, "'", sep 
 #res <- wos_search(sid, search_query)
 print(search_query)
 }
+
+
 
 
 # Number of results
