@@ -1,11 +1,11 @@
 library(wosr)
+library(dplyr)
 
 # Load in data
-load("data/clean_pathogen.rda")
-data = genus_pathogen
+load("data/species.sharing.rda")
 
 # All Hostnames 
-hostnames <- unique(data$host)
+
 
 # Authentication to get a session id - need user
 # https://cran.r-project.org/web/packages/wosr/wosr.pdf
@@ -18,7 +18,8 @@ sid <- auth(username = NULL,
 for(org in hostnames){
 # Use session id to run a query
 search_query <- paste("TI='", org, "' OR AB='", org, "' OR AK='", org, "'", sep = "")
-res <- wos_search(sid, search_query)
+#res <- wos_search(sid, search_query)
+print(search_query)
 }
 
 
