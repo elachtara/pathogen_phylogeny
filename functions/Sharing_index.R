@@ -1,12 +1,11 @@
-# Load in data
 
 # Function to get Jaccard index
 get_sharing <- function(data, path_to_save){
   
   # Initiate for storage
   hostnames <- unique(data$host)
-  sharing <- matrix(NA, nrow = 0, ncol = 5)
-  colnames(sharing) <- c('org1', 'org2', 'org1.count', 'org2.count', 'shared')
+  sharing <- matrix(NA, nrow = 0, ncol = 6)
+  colnames(sharing) <- c('org1', 'org2', 'org1.count', 'org2.count', 'shared', 'pathogens')
   
 
 # Function to parse through and create pathogen sharing index
@@ -32,20 +31,12 @@ for(org1 in hostnames){
       unique()
     org2.count <- nrow(org2.sci)
     
-    # Get the number of shared pathogens
+    # Get the number of shared pathogen
     shared <- length(Reduce(intersect, list(org1.sci$sci_name, org2.sci$sci_name)))
-   
-    #if(shared == NA){
-      # Dont add if nothing shared
-      #tmp <- matrix(NA, nrow = 0, ncol = 5)
-      #colnames(tmp) <- c('org1', 'org2', 'org1.count', 'org2.count', 'shared')
-    #}else{
-      
-    # Get the percent shared between them
-    #percent <- as.numeric(round((shared/total), 3))
+    pathogens <- paste(Reduce(intersect, list(org1.sci$sci_name, org2.sci$sci_name)), collapse = ", ")
     
     # Bind together this comparison with all comparisons
-    temp <- as.matrix(cbind(org1, org2, org1.count, org2.count, shared))
+    temp <- as.matrix(cbind(org1, org2, org1.count, org2.count, shared, pathogens))
     #}
     
     sharing <- rbind(sharing, temp)
