@@ -46,11 +46,11 @@ rm(id)
 clean_pathogen <- all_fams %>% select(sci_name, host) %>% distinct()
 
 # Split into families
-genus_pathogen <- clean_pathogen %>% separate(host, c('host', 'species') , sep = " ") %>%
-  select(-species) %>% distinct()
+genus_pathogen <- clean_pathogen %>% separate(host, c('host', 'species') , sep = " ")  %>% separate(sci_name, c('sci_name', 'species2') , sep = " ") %>%
+  select(-species, -species2) %>% distinct()
 
 # Split into species, no genus
-species_pathogen <- clean_pathogen %>% filter(!grepl('sp.', host)) %>% distinct()
+species_pathogen <- clean_pathogen %>% filter(!grepl('sp.', host)) %>% filter(!grepl('sp.', sci_name))%>% distinct()
 
 # Save the cleaned/corrected data
 save(species_pathogen, genus_pathogen, file = "data/clean_pathogen.rda")
