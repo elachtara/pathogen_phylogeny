@@ -28,14 +28,32 @@ tree <-  multi2di(tree)
 name.check(tree, primate_data, data.names = primate_data$TenkTr_species)
 
 
-# Calculate phylo distance between all pairs
+# Calculate phylo distance between all pairs, save as dataframe
 disMat <- adephylo::distTips(tree, tips = "all", method = "nNodes") %>% as.matrix()
+disMat[lower.tri(disMat,diag=TRUE)]=NA # put d
+disDF <-  as.data.frame(as.table(disMat))
+disDF <- na.omit(disDF)
+colnames(disDF) <- c('org1', 'org2', 'phylosim')
+
+
+# Join phylo distance with Jaccard Index
+id1 <- match(disDF$org1, primate_data$Primate_host)
+disDF$path1 <- primate_data$Total_PSR[id1]
+
+id2 <- match(disDF$org2, primate_data$Primate_host)
+disDF$path2 <- primate_data$Total_PSR[id2]
+disDF <- disDF %>% mutate(shared = (path1 + path2)/2)
+
+# Run regression of phylosim vs pathogen shared
+Myreg <- lm(log10(phylosim) ~ log10(shared), disDF)
+
+save(disDF, file = "data/phylo/Guide/practice.rda")
 
 
 
 
 
-
+         
 
 
 
