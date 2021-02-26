@@ -3,32 +3,27 @@ library(geiger)
 library(caper)
 library(phytools)
 
-#set working directory (where you put the data and nexus files in your computer)
-setwd("~/your_path/")  
 
-#dataset
-primate_data = read.csv("full_primate_dataset_v3_2.17.2021.csv", header=T)
-head(primate_data)
-length(primate_data$TenkTr_species) #130 species in dataset
+# Read in Data
+primate_data = read.csv("data/phylo/Guide/full_primate_dataset_v3_2.17.2021.csv", header=T)
 
-#10kTrees phylogeny (not an authority but matches our species dataset exactly, so we retain sample size)
-tree = read.nexus("TenkTrees_v3_tree.nex") #read in the tree file
-plot(tree, cex=0.4) #visualize the tree file
-tree #130 tips, 128 internal nodes (# internal nodes should be # tips - 1, so this tree has a polytomy)
-is.binary(tree) #and this confirms that the tree indeed is not binary, i.e. has a polytomy
+#10kTrees phylogeny
+tree = read.nexus("data/phylo/Guide/TenkTrees_v3_tree.nex")
+  
+# Plot tree
+plot(tree, cex=0.4)
 
-#where is the polytomy? 
-#on close examination, I found the polytomy in genus Macaca
+
+# Identify polytomy (when nodes < tips - 1; our case 128 < 130-1)
+is.binary(tree) 
 zoom(tree, list(grep("Macaca", tree$tip.label)))
 
-#resolve the polytomy by randomly assigning a branch to have length of zero
+# Resolve the polytomy by randomly assigning a branch to have length of zero
 tree = multi2di(tree)
-tree #now has 130 tips and 129 internal nodes,
-is.binary(tree) #and now the tree is binary
-zoom(tree, list(grep("Macaca", tree$tip.label))) #but should still look the same because branch length=0
 
-#check that names between phylogeny and dataset match (I did this step already when I created the phylogeny file)
-name.check(tree, primate_data, data.names=primate_data$TenkTr_species)
+
+# Check that names between phylogeny and dataset match
+name.check(tree, primate_data, data.names = primate_data$TenkTr_species)
 
 #now create a subset of data with just the traits we are interested in (removing NAs)
 #and a subset of phylogeny to match
