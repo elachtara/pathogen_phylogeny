@@ -1,8 +1,9 @@
 library(wosr)
 library(dplyr)
 
-# Load in data
-load("data/species.sharing.rda")
+# https://api.clarivate.com/swagger-ui/?url=https%3A%2F%2Fdeveloper.clarivate.com%2Fapis%2Fwoslite%2Fswagger%3FforUser%3D5171c957941c8d11ba1656f0bc4986906b2c5276
+# https://developer.clarivate.com/help/api
+
 
 # for a small example
 data = as.data.frame(sharing)
