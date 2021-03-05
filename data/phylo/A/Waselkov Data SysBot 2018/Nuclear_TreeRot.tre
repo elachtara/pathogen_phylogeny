@@ -1,0 +1,195 @@
+#NEXUS
+begin taxa;
+	dimensions ntax=103;
+	taxlabels
+	Pleuropter
+	AcanthoTX
+	PumilNC
+	PumilNJ
+	PumilSC
+	Arenicola
+	TuberculKS
+	Floridanus
+	GreggiiLA
+	GreggiiTX
+	Australis
+	AustralisJRA
+	Cannabinus
+	TuberculIL
+	Acutilobus
+	PowelliiB
+	PowelliiP
+	Retroflexus
+	WrightiiTX1
+	WrightiiTX2
+	ScariosusMO2
+	CaudatusARG
+	CaudatusInd
+	CruentusInd
+	Cruentus9131
+	DubiusC
+	HybridusGuat
+	QuitensisEC
+	QuitensisARG
+	DubiusVZ
+	HybridusMO1
+	HybridusMO2
+	HypochonInd
+	HypochonMX
+	Palmeri
+	PalmeriAZ
+	WatsoniiMO2
+	PalmeriMX
+	SpinosusNC
+	SpinosusS
+	AlbusCan
+	AlbusSA
+	Californicus
+	BlitoidesIA
+	BlitoidesNM
+	SclerantSC
+	Fimbriat612
+	Fimbriat662
+	Urceolatus
+	SquamulSC
+	SquamulST
+	ChamissoaMX
+	ChamissoaBO
+	Anderss
+	Polygon
+	Tamaulip
+	CrassipesTX1
+	CrassipesTX2
+	CrassipesEC
+	BlitumB
+	BlitumO
+	BlitumEmar
+	BlitumP
+	Centralis
+	Macrocarpus
+	Mitchellii
+	Cochleitep
+	AffCusp
+	TricolorMP
+	TricolorTN
+	Induratus
+	ClemCran
+	ClemCress
+	Cuspid605
+	Cuspid699
+	GraecAsch
+	GraecThell
+	GraecSilvPT
+	GraecSilvEC
+	Praetermiss
+	Thunberg1889
+	Thunberg2111
+	Interruptus
+	RhombG
+	RhombR
+	Undul580
+	Undul652
+	CardenMO2
+	Crispus
+	StandleyZ
+	Persimilis
+	StandleyPS
+	DeflexARG
+	DeflexC
+	DeflexPort
+	ViridisBZ
+	ViridisJ
+	MuricatusC
+	MuricatusPS
+	VulgatissC
+	VulgatPS
+	KloosPS
+	Looseri
+;
+end;
+
+begin trees;
+	tree partition1 = [&R] (Pleuropter,((((((AcanthoTX,(PumilNC,PumilNJ,PumilSC)[&decayindex=20.0])[&decayindex=1.0],(Arenicola,TuberculKS)[&decayindex=1.0])[&decayindex=16.0],(Floridanus,(GreggiiLA,GreggiiTX)[&decayindex=26.0])[&decayindex=1.0])[&decayindex=17.0],(((Australis,AustralisJRA)[&decayindex=3.0],Cannabinus)[&decayindex=16.0],TuberculIL)[&decayindex=2.0])[&decayindex=2.0],(((Acutilobus,((PowelliiB,PowelliiP)[&decayindex=1.0],(Retroflexus,(WrightiiTX1,WrightiiTX2)[&decayindex=3.0])[&decayindex=1.0])[&decayindex=3.0],ScariosusMO2)[&decayindex=3.0],(((CaudatusARG,CaudatusInd)[&decayindex=2.0],CruentusInd,Cruentus9131,DubiusC,HybridusGuat,QuitensisEC,QuitensisARG)[&decayindex=1.0],DubiusVZ,HybridusMO1,HybridusMO2,(HypochonInd,HypochonMX)[&decayindex=4.0])[&decayindex=3.0])[&decayindex=9.0],(((Palmeri,PalmeriAZ)[&decayindex=4.0],WatsoniiMO2)[&decayindex=1.0],(PalmeriMX,(SpinosusNC,SpinosusS)[&decayindex=38.0])[&decayindex=1.0])[&decayindex=7.0])[&decayindex=22.0])[&decayindex=11.0],((((AlbusCan,AlbusSA)[&decayindex=8.0],Californicus)[&decayindex=2.0],(BlitoidesIA,BlitoidesNM)[&decayindex=11.0])[&decayindex=2.0],SclerantSC)[&decayindex=12.0])[&decayindex=3.0],(((Fimbriat612,Fimbriat662)[&decayindex=9.0],Urceolatus)[&decayindex=7.0],(SquamulSC,SquamulST)[&decayindex=17.0])[&decayindex=15.0],(ChamissoaMX,ChamissoaBO)[&decayindex=57.0],((((Anderss,Polygon)[&decayindex=29.0],Tamaulip)[&decayindex=4.0],(CrassipesTX1,CrassipesTX2,CrassipesEC)[&decayindex=12.0])[&decayindex=2.0],(((((BlitumB,BlitumO)[&decayindex=1.0],(BlitumEmar,BlitumP)[&decayindex=1.0])[&decayindex=17.0],(((((Centralis,Macrocarpus)[&decayindex=1.0],Mitchellii)[&decayindex=1.0],Cochleitep,AffCusp,(TricolorMP,TricolorTN)[&decayindex=13.0])[&decayindex=1.0],Induratus)[&decayindex=1.0],(ClemCran,ClemCress)[&decayindex=2.0],(Cuspid605,Cuspid699)[&decayindex=8.0],((((GraecAsch,GraecThell)[&decayindex=3.0],(GraecSilvPT,GraecSilvEC)[&decayindex=5.0])[&decayindex=4.0],Praetermiss)[&decayindex=1.0],(Thunberg1889,Thunberg2111)[&decayindex=13.0])[&decayindex=2.0],Interruptus,(RhombG,RhombR)[&decayindex=4.0],(Undul580,Undul652)[&decayindex=4.0])[&decayindex=3.0])[&decayindex=7.0],CardenMO2,((Crispus,StandleyZ)[&decayindex=2.0],(Persimilis,StandleyPS)[&decayindex=5.0])[&decayindex=9.0],(((DeflexARG,DeflexC,DeflexPort)[&decayindex=13.0],(ViridisBZ,ViridisJ)[&decayindex=10.0])[&decayindex=1.0],((MuricatusC,MuricatusPS)[&decayindex=22.0],(VulgatissC,VulgatPS)[&decayindex=18.0])[&decayindex=2.0])[&decayindex=1.0],KloosPS)[&decayindex=3.0],Looseri)[&decayindex=17.0])[&decayindex=3.0]);
+end;
+
+begin figtree;
+	set appearance.backgroundColorAttribute="Default";
+	set appearance.backgroundColour=#-1;
+	set appearance.branchColorAttribute="User selection";
+	set appearance.branchLineWidth=1.0;
+	set appearance.branchMinLineWidth=0.0;
+	set appearance.branchWidthAttribute="Fixed";
+	set appearance.foregroundColour=#-16777216;
+	set appearance.selectionColour=#-2144520576;
+	set branchLabels.colorAttribute="User selection";
+	set branchLabels.displayAttribute="decayindex";
+	set branchLabels.fontName="sansserif";
+	set branchLabels.fontSize=10;
+	set branchLabels.fontStyle=0;
+	set branchLabels.isShown=true;
+	set branchLabels.significantDigits=4;
+	set layout.expansion=455;
+	set layout.layoutType="RECTILINEAR";
+	set layout.zoom=0;
+	set legend.attribute=null;
+	set legend.fontSize=10.0;
+	set legend.isShown=false;
+	set legend.significantDigits=4;
+	set nodeBars.barWidth=4.0;
+	set nodeBars.displayAttribute=null;
+	set nodeBars.isShown=false;
+	set nodeLabels.colorAttribute="User selection";
+	set nodeLabels.displayAttribute="Node ages";
+	set nodeLabels.fontName="sansserif";
+	set nodeLabels.fontSize=8;
+	set nodeLabels.fontStyle=0;
+	set nodeLabels.isShown=false;
+	set nodeLabels.significantDigits=4;
+	set nodeShape.colourAttribute=null;
+	set nodeShape.isShown=false;
+	set nodeShape.minSize=10.0;
+	set nodeShape.scaleType=Width;
+	set nodeShape.shapeType=Circle;
+	set nodeShape.size=4.0;
+	set nodeShape.sizeAttribute=null;
+	set polarLayout.alignTipLabels=false;
+	set polarLayout.angularRange=0;
+	set polarLayout.rootAngle=0;
+	set polarLayout.rootLength=100;
+	set polarLayout.showRoot=true;
+	set radialLayout.spread=0.0;
+	set rectilinearLayout.alignTipLabels=false;
+	set rectilinearLayout.curvature=0;
+	set rectilinearLayout.rootLength=10000;
+	set scale.offsetAge=0.0;
+	set scale.rootAge=1.0;
+	set scale.scaleFactor=1.0;
+	set scale.scaleRoot=false;
+	set scaleAxis.automaticScale=true;
+	set scaleAxis.fontSize=8.0;
+	set scaleAxis.isShown=false;
+	set scaleAxis.lineWidth=1.0;
+	set scaleAxis.majorTicks=1.0;
+	set scaleAxis.origin=0.0;
+	set scaleAxis.reverseAxis=false;
+	set scaleAxis.showGrid=true;
+	set scaleBar.automaticScale=true;
+	set scaleBar.fontSize=10.0;
+	set scaleBar.isShown=false;
+	set scaleBar.lineWidth=1.0;
+	set scaleBar.scaleRange=2.0;
+	set tipLabels.colorAttribute="User selection";
+	set tipLabels.displayAttribute="Names";
+	set tipLabels.fontName="sansserif";
+	set tipLabels.fontSize=10;
+	set tipLabels.fontStyle=0;
+	set tipLabels.isShown=true;
+	set tipLabels.significantDigits=4;
+	set trees.order=false;
+	set trees.orderType="increasing";
+	set trees.rooting=true;
+	set trees.rootingType="User Selection";
+	set trees.transform=false;
+	set trees.transformType="cladogram";
+end;
+

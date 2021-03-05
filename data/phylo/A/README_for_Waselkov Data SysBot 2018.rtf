@@ -1,0 +1,95 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1561\cocoasubrtf100
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\froman\fcharset0 TimesNewRomanPSMT;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 README file for Dryad Digital Repository\
+\
+Publication: Waselkov, K.E., A. Boleda, and K.M. Olsen. 2018. A Phylogeny of the Genus Amaranthus (Amaranthaceae), Based on Several Low-Copy Nuclear Loci and Chloroplast Regions. Systematic Botany X: X-X.  \
+\
+Files:\
+Sequence alignment files: each file contains an alignment of all sequences generated for that gene, or (in the case of Nuclear and Chloroplast alignments), a concatenated alignment of all sequences generated for the 4 nuclear genes (A36, G3PDH, ITS, and Waxy, in that order) or the 2 chloroplast regions (trnC-trnD and matK/trnK, in that order).  Each alignment file is in NEXUS format.  Missing data is coded as N\'92s, gaps are coded as -\'92s, and simple indel coding (according to Simmons and Ochoterena, implemented in SeqState) is applied.  A slight modification was made to simple indel coding: whenever gaps in the original data were ambiguously aligned (replaced by N\'92s), SeqState automatically coded these gaps as 0\'92s.  In this analysis, they were changed to ?\'92s.  A MrBayes datablock is included at the end of the file, for partitioning and applying different models of molecular evolution to different datasets, and for excluding any mononucleotide repeats longer than 8 bp and indel characters associated with these repeats.\
+\
+Final A36 Alignment.txt\
+Final Chloroplast Concatenated Alignment.txt\
+Final G3PDH Alignment.txt\
+Final ITS Alignment\
+Final MatK/TrnK Alignment\
+Final Nuclear Concatenated Alignment\
+Final TrnL5\'92-TrnL3\'92 Alignment\
+Final Waxy Alignment\
+\
+Tree Files: each tree file (.tre) is in NEXUS or FigTree format. Tree files with \'93MrBayes\'94 in the title contain two identical tree topologies, directly output by MrBayes for the dataset named in the title: a 50% majority-rule consensus Bayesian tree with posterior probability values for the partitions, and a 50% majority-rule consensus Bayesian tree with only branch length data. The trees with \'93PaupStrictConsensus\'94 in the title are the strict consensus trees of all most parsimonious trees found in the PAUP* search for that dataset (with maxtrees = 20000).  The trees with \'93TreeRot\'94 in the title are the result of the TreeRot analysis for the dataset named in the title, depicting the PAUP* strict consensus tree with decay indices (Bremer support values) at each node. \
+  \
+A36_MrBayes.tre\
+A36_PaupStrictConsensus.tre\
+Chloroplast_MrBayes.tre\
+Chloroplast_PaupStrictConsensus.tre\
+Chloroplast_TreeRot.tre\
+G3PDH_MrBayes.tre\
+G3PDH_PaupStrictConsensus.tre\
+ITS_MrBayes.tre\
+ITS_PaupStrictConsensus.tre\
+Nuclear_MrBayes.tre\
+Nuclear_PaupStrictConsensus.tre\
+Nuclear_TreeRot.tre\
+Waxy_MrBayes.tre\
+Waxy_PaupStrictConsensus.tre\
+\
+Bootstrap Support Log files: each log file (.txt) is in text format, and is copied from the Console printout resulting directly from a PAUP* run through the command line on a Mac, for the dataset named in the title.  The output shows a schematic of the maximum parsimony 50% majority-rule consensus tree resulting from 1000 bootstrap replicates, as well as associated bipartitions.  \
+\
+A36_PaupBootstrap_output_log.txt\
+Chloroplast_PaupBootstrap_output_log.txt\
+G3PDH_PaupBootstrap_output_log.txt\
+ITS_PaupBootstrap_output_log.txt\
+Nuclear_PaupBootstrap_output_log.txt\
+Waxy_PaupBootstrap_output_log.txt\
+\
+\
+Key to Amaranths tree names_Dryad.txt: contains a key to translate taxon names/abbreviations from the tree files and alignments (listed first in the Key) into the taxon names used in Table 1 and all published trees (listed second in the Key).  \
+\
+Supplementary Tables and Figures: Tables and figures that are supplementary to those in the published paper itself.  Table S1 and Table S2 are found in \'93Supplementary Tables.docx\'94 in Word document format and include legends.  The figure files (.tif) are as follows:\
+\
+Figure S1A. Nuclear Parsimony Tree.tif\
+Figure S1B. Chloroplast Parsimony Tree.tif\
+Figure S2A. A36 Bayesian Tree.tif\
+Figure S2B. G3PDH Bayesian Tree.tif\
+Figure S2C. ITS Bayesian Tree.tif\
+Figure S2D. Waxy Bayesian Tree.tif\
+\
+Figure Legends:\
+\pard\pardeftab720\ri720\partightenfactor0
+\cf0 \
+Figures S1A and S1B
+\f1 .
+\f0  Maximum parsimony strict consensus trees for 
+\i Amaranthus
+\i0 , based on: A) four concatenated, partitioned nuclear genes; and B) two concatenated, partitioned chloroplast regions, rooted with two outgroups (
+\i Chamissoa altissima
+\i0  and 
+\i Pleuropterantha revoilii
+\i0 ). Refer to Table 1 for abbreviations in taxon names. Numbers above the branches are bootstrap values from 1000 pseudoreplicates; numbers below the branches are decay indices (Bremer support values).  \
+\
+\
+Figures S2A, S2B, S2C, and S2D
+\f1 .
+\f0  Bayesian (> 50%) majority rule consensus trees for 
+\i Amaranthus
+\f1 ,
+\f0\i0  based on individual nuclear regions: A) 
+\i A36
+\i0 ; B) 
+\i G3PDH
+\i0 ; C) ITS; and D) 
+\i Waxy
+\i0 , rooted with up to two outgroups (
+\i Chamissoa altissima
+\i0  and 
+\i Pleuropterantha revoilii
+\i0 ). Refer to Table 1 for abbreviations in taxon names. Numbers above the branches are posterior probability values; numbers below the branches are bootstrap values from the maximum parsimony analyses (trees not shown).  \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \
+\
+For questions, please contact Katherine Waselkov at kwaselkov@csufresno.edu.  }

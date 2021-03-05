@@ -1,0 +1,233 @@
+#NEXUS
+[ID: 8361921569]
+begin taxa;
+	dimensions ntax=107;
+	taxlabels
+		AcanthoTX_ITS
+		Acutilobus_ITS
+		AlbusCan_ITS
+		AlbusSA_ITS
+		Anderss_ITS
+		Arenicola_ITS
+		Australis_ITS
+		AustralisJRA_ITS
+		BlitoidesIA_ITS
+		BlitoidesNM_ITS
+		BlitumB_ITS
+		BlitumEmar_ITS
+		BlitumO_ITS
+		BlitumP_ITS
+		Californicus_ITS
+		Cannabinus_ITS
+		CardenMO2_ITS
+		CaudatusARG_ITS
+		CaudatusInd_ITS
+		Centralis_ITS
+		ClementCran_ITS
+		ClementCress_ITS
+		Cochleitep_ITS
+		CrassipesTX1_ITS
+		CrassipesTX2_ITS
+		CrassipesEC_ITS
+		Crispus_ITS
+		CruentusInd_ITS
+		Cruentus9131_ITS
+		AffCuspid_ITS
+		Cuspid605_ITS
+		Cuspid699_ITS
+		DeflexARG_ITS
+		DeflexC_ITS
+		DeflexPort_ITS
+		DubiusC_ITS
+		DubiusVZ_ITS
+		Fimbriat612_ITS
+		Fimbriat662_ITS
+		Floridanus_1_ITS
+		Floridanus_3_ITS
+		GraecAscher_ITS
+		GraecSilvPT_ITS
+		GraecSilvEC_ITS
+		GraecThell_ITS
+		GreggiiLA_ITS
+		GreggiiTX_ITS
+		HybridusMO1_ITS
+		HybridusGuat_ITS
+		HybridusMO2_ITS
+		HypochonInd_ITS
+		HypochonMX_ITS
+		Induratus_ITS
+		Interruptus_ITS
+		KloosPS_ITS
+		Looseri_ITS
+		Macrocarpus_ITS
+		Mitchellii_ITS
+		MuricatusC_ITS
+		MuricatusPS_ITS
+		Palmeri_ITS
+		PalmeriAZ2_ITS
+		PalmeriMX_ITS
+		Persimilis_ITS
+		Polygon_ITS
+		PowelliiB_ITS
+		PowelliiP_ITS
+		Praetermiss_ITS
+		PumilNC_ITS
+		PumilNJ_ITS
+		PumilSC_ITS
+		QuitensisEC_ITS
+		QuitensisARG_ITS
+		Retroflexus_ITS
+		RhombG_ITS
+		RhombR_ITS
+		ScariosusMO_ITS
+		SclerantSC_ITS
+		SpinosusNC_ITS
+		SpinosusS_ITS
+		SquamulSC_ITS
+		SquamulST_ITS
+		StandleyPS_ITS
+		StandleyZ_ITS
+		Tamaulip_ITS
+		Thunberg1889_ITS
+		Thunberg2111_ITS
+		TricolorMP_ITS
+		TricolorTN_ITS
+		TuberculKS_1_ITS
+		TuberculKS_2_ITS
+		TuberculIL_1_ITS
+		TuberculIL_2_ITS
+		Undul580_ITS
+		Undul652_ITS
+		UrceolatusMO_ITS
+		ViridisBZ_ITS
+		ViridisJ_ITS
+		VulgatissC_ITS
+		VulgatPS_ITS
+		WatsoniiMO_2_ITS
+		WatsoniiMO_1_ITS
+		WrightiiTX1_ITS
+		WrightiiTX2_ITS
+		Pleuropter_ITS
+		ChamissoaMX_ITS
+		ChamissoaBO_ITS
+		;
+end;
+begin trees;
+	translate
+		1	AcanthoTX_ITS,
+		2	Acutilobus_ITS,
+		3	AlbusCan_ITS,
+		4	AlbusSA_ITS,
+		5	Anderss_ITS,
+		6	Arenicola_ITS,
+		7	Australis_ITS,
+		8	AustralisJRA_ITS,
+		9	BlitoidesIA_ITS,
+		10	BlitoidesNM_ITS,
+		11	BlitumB_ITS,
+		12	BlitumEmar_ITS,
+		13	BlitumO_ITS,
+		14	BlitumP_ITS,
+		15	Californicus_ITS,
+		16	Cannabinus_ITS,
+		17	CardenMO2_ITS,
+		18	CaudatusARG_ITS,
+		19	CaudatusInd_ITS,
+		20	Centralis_ITS,
+		21	ClementCran_ITS,
+		22	ClementCress_ITS,
+		23	Cochleitep_ITS,
+		24	CrassipesTX1_ITS,
+		25	CrassipesTX2_ITS,
+		26	CrassipesEC_ITS,
+		27	Crispus_ITS,
+		28	CruentusInd_ITS,
+		29	Cruentus9131_ITS,
+		30	AffCuspid_ITS,
+		31	Cuspid605_ITS,
+		32	Cuspid699_ITS,
+		33	DeflexARG_ITS,
+		34	DeflexC_ITS,
+		35	DeflexPort_ITS,
+		36	DubiusC_ITS,
+		37	DubiusVZ_ITS,
+		38	Fimbriat612_ITS,
+		39	Fimbriat662_ITS,
+		40	Floridanus_1_ITS,
+		41	Floridanus_3_ITS,
+		42	GraecAscher_ITS,
+		43	GraecSilvPT_ITS,
+		44	GraecSilvEC_ITS,
+		45	GraecThell_ITS,
+		46	GreggiiLA_ITS,
+		47	GreggiiTX_ITS,
+		48	HybridusMO1_ITS,
+		49	HybridusGuat_ITS,
+		50	HybridusMO2_ITS,
+		51	HypochonInd_ITS,
+		52	HypochonMX_ITS,
+		53	Induratus_ITS,
+		54	Interruptus_ITS,
+		55	KloosPS_ITS,
+		56	Looseri_ITS,
+		57	Macrocarpus_ITS,
+		58	Mitchellii_ITS,
+		59	MuricatusC_ITS,
+		60	MuricatusPS_ITS,
+		61	Palmeri_ITS,
+		62	PalmeriAZ2_ITS,
+		63	PalmeriMX_ITS,
+		64	Persimilis_ITS,
+		65	Polygon_ITS,
+		66	PowelliiB_ITS,
+		67	PowelliiP_ITS,
+		68	Praetermiss_ITS,
+		69	PumilNC_ITS,
+		70	PumilNJ_ITS,
+		71	PumilSC_ITS,
+		72	QuitensisEC_ITS,
+		73	QuitensisARG_ITS,
+		74	Retroflexus_ITS,
+		75	RhombG_ITS,
+		76	RhombR_ITS,
+		77	ScariosusMO_ITS,
+		78	SclerantSC_ITS,
+		79	SpinosusNC_ITS,
+		80	SpinosusS_ITS,
+		81	SquamulSC_ITS,
+		82	SquamulST_ITS,
+		83	StandleyPS_ITS,
+		84	StandleyZ_ITS,
+		85	Tamaulip_ITS,
+		86	Thunberg1889_ITS,
+		87	Thunberg2111_ITS,
+		88	TricolorMP_ITS,
+		89	TricolorTN_ITS,
+		90	TuberculKS_1_ITS,
+		91	TuberculKS_2_ITS,
+		92	TuberculIL_1_ITS,
+		93	TuberculIL_2_ITS,
+		94	Undul580_ITS,
+		95	Undul652_ITS,
+		96	UrceolatusMO_ITS,
+		97	ViridisBZ_ITS,
+		98	ViridisJ_ITS,
+		99	VulgatissC_ITS,
+		100	VulgatPS_ITS,
+		101	WatsoniiMO_2_ITS,
+		102	WatsoniiMO_1_ITS,
+		103	WrightiiTX1_ITS,
+		104	WrightiiTX2_ITS,
+		105	Pleuropter_ITS,
+		106	ChamissoaMX_ITS,
+		107	ChamissoaBO_ITS
+		;
+   [Note: This tree contains information on the topology, 
+          branch lengths (if present), and the probability
+          of the partition indicated by the branch.]
+   tree con_50_majrule = (106:6.332571e-03,107:1.353483e-03,(((((1:6.617306e-04,(6:6.580245e-04,(40:6.479191e-04,41:1.528659e-03)1.000:2.522305e-03,90:1.615408e-03,92:6.672953e-04)0.628:1.546639e-03,46:6.564714e-04,47:6.710030e-04,91:1.583406e-03,93:2.570877e-03)1.000:4.573653e-03,7:7.270543e-04,8:6.427671e-04,16:6.163989e-04,(69:6.370774e-04,70:6.630034e-04,71:7.025943e-04)1.000:3.419194e-03)0.996:2.688205e-03,(2:2.436013e-03,(18:1.535297e-03,19:6.212475e-04,28:7.053364e-04,29:6.433058e-04,36:1.599693e-03,37:6.479464e-04,(48:6.307490e-04,50:6.355835e-04,51:6.535363e-04,52:6.428590e-04)0.982:1.603249e-03,49:1.591871e-03,72:6.282903e-04,73:1.630450e-03)1.000:3.399809e-03,((66:6.693819e-04,67:6.882203e-04,103:6.359401e-04,104:6.927036e-04)0.930:1.597167e-03,74:2.622565e-03)0.852:2.267562e-03,77:1.680964e-03)0.687:3.511938e-03,((61:6.373592e-04,62:7.435966e-04,63:7.032497e-04,101:1.662411e-03,102:6.460322e-04)1.000:3.614293e-03,(79:6.669022e-04,80:6.888054e-04)0.998:3.517078e-03)1.000:1.217907e-02)0.571:5.500637e-03,(((((3:6.773775e-04,4:6.708520e-04)1.000:3.410127e-03,((9:7.567863e-04,10:6.966150e-04)0.999:8.108377e-03,78:1.023842e-02)0.809:3.296141e-03,15:2.488554e-03)0.931:7.658421e-03,26:6.620905e-04,85:7.173578e-03)0.521:1.653203e-03,24:6.382057e-04,25:1.663778e-03)0.520:1.715366e-03,(5:6.968670e-04,65:6.270293e-04)1.000:1.140401e-02)0.826:3.518569e-03,((((((11:7.458059e-04,(12:7.118631e-04,14:6.819418e-04)0.952:1.628342e-03,13:6.903333e-04)0.996:3.566846e-03,17:6.518636e-04)0.587:1.256280e-03,(27:6.531032e-04,64:6.469983e-04,83:6.742496e-04,84:6.718578e-04)0.996:3.911667e-03)0.756:1.763842e-03,((33:6.941092e-04,34:6.382145e-04,35:6.320058e-04)1.000:3.611094e-03,(99:6.254487e-04,100:6.328735e-04)0.999:6.096655e-03)0.992:3.967647e-03)0.716:1.799668e-03,(97:6.825908e-04,98:6.458361e-04)0.988:2.326886e-03)0.503:2.354799e-03,(20:3.060711e-03,(42:6.310330e-04,45:6.819082e-04)0.999:2.077515e-03)0.535:1.580287e-03,(21:6.609779e-04,31:6.653551e-04,32:7.219336e-04)0.587:1.426078e-03,22:4.563684e-03,23:6.705201e-04,30:6.886631e-04,43:6.508651e-04,44:6.725347e-04,(53:3.845239e-03,(94:6.602202e-04,95:1.540802e-03)0.982:1.929852e-03)0.657:1.610662e-03,54:1.746773e-03,55:5.242305e-03,57:3.821912e-03,58:1.577622e-03,(59:4.896943e-03,60:1.402275e-03)1.000:8.821737e-03,68:1.591278e-03,75:1.666605e-03,76:2.549905e-03,(86:1.670152e-03,87:6.797280e-04)0.969:1.643020e-03,(88:7.189613e-04,89:6.356967e-04)0.993:1.704603e-03)0.550:1.522521e-03,((38:6.602695e-04,39:6.398644e-04,96:6.591183e-04)0.997:2.567643e-03,(81:7.056827e-04,82:3.632849e-03)1.000:3.648774e-03)1.000:5.608323e-03,56:3.377027e-03)1.000:5.029013e-02,105:5.663931e-02)1.000:7.574513e-02);
+
+   [Note: This tree contains information only on the topology
+          and branch lengths (median of the posterior probability density).]
+   tree con_50_majrule = (106:6.332571e-03,107:1.353483e-03,(((((1:6.617306e-04,(6:6.580245e-04,(40:6.479191e-04,41:1.528659e-03):2.522305e-03,90:1.615408e-03,92:6.672953e-04):1.546639e-03,46:6.564714e-04,47:6.710030e-04,91:1.583406e-03,93:2.570877e-03):4.573653e-03,7:7.270543e-04,8:6.427671e-04,16:6.163989e-04,(69:6.370774e-04,70:6.630034e-04,71:7.025943e-04):3.419194e-03):2.688205e-03,(2:2.436013e-03,(18:1.535297e-03,19:6.212475e-04,28:7.053364e-04,29:6.433058e-04,36:1.599693e-03,37:6.479464e-04,(48:6.307490e-04,50:6.355835e-04,51:6.535363e-04,52:6.428590e-04):1.603249e-03,49:1.591871e-03,72:6.282903e-04,73:1.630450e-03):3.399809e-03,((66:6.693819e-04,67:6.882203e-04,103:6.359401e-04,104:6.927036e-04):1.597167e-03,74:2.622565e-03):2.267562e-03,77:1.680964e-03):3.511938e-03,((61:6.373592e-04,62:7.435966e-04,63:7.032497e-04,101:1.662411e-03,102:6.460322e-04):3.614293e-03,(79:6.669022e-04,80:6.888054e-04):3.517078e-03):1.217907e-02):5.500637e-03,(((((3:6.773775e-04,4:6.708520e-04):3.410127e-03,((9:7.567863e-04,10:6.966150e-04):8.108377e-03,78:1.023842e-02):3.296141e-03,15:2.488554e-03):7.658421e-03,26:6.620905e-04,85:7.173578e-03):1.653203e-03,24:6.382057e-04,25:1.663778e-03):1.715366e-03,(5:6.968670e-04,65:6.270293e-04):1.140401e-02):3.518569e-03,((((((11:7.458059e-04,(12:7.118631e-04,14:6.819418e-04):1.628342e-03,13:6.903333e-04):3.566846e-03,17:6.518636e-04):1.256280e-03,(27:6.531032e-04,64:6.469983e-04,83:6.742496e-04,84:6.718578e-04):3.911667e-03):1.763842e-03,((33:6.941092e-04,34:6.382145e-04,35:6.320058e-04):3.611094e-03,(99:6.254487e-04,100:6.328735e-04):6.096655e-03):3.967647e-03):1.799668e-03,(97:6.825908e-04,98:6.458361e-04):2.326886e-03):2.354799e-03,(20:3.060711e-03,(42:6.310330e-04,45:6.819082e-04):2.077515e-03):1.580287e-03,(21:6.609779e-04,31:6.653551e-04,32:7.219336e-04):1.426078e-03,22:4.563684e-03,23:6.705201e-04,30:6.886631e-04,43:6.508651e-04,44:6.725347e-04,(53:3.845239e-03,(94:6.602202e-04,95:1.540802e-03):1.929852e-03):1.610662e-03,54:1.746773e-03,55:5.242305e-03,57:3.821912e-03,58:1.577622e-03,(59:4.896943e-03,60:1.402275e-03):8.821737e-03,68:1.591278e-03,75:1.666605e-03,76:2.549905e-03,(86:1.670152e-03,87:6.797280e-04):1.643020e-03,(88:7.189613e-04,89:6.356967e-04):1.704603e-03):1.522521e-03,((38:6.602695e-04,39:6.398644e-04,96:6.591183e-04):2.567643e-03,(81:7.056827e-04,82:3.632849e-03):3.648774e-03):5.608323e-03,56:3.377027e-03):5.029013e-02,105:5.663931e-02):7.574513e-02);
+end;

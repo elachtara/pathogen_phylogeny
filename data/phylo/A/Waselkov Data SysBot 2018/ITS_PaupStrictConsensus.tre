@@ -1,0 +1,17 @@
+#NEXUS 
+
+Begin trees;  [Treefile saved Mon Dec  1 19:51:11 2014]
+[!
+>Consensus of 20100 trees
+>
+>Source of trees from which consensus(es) calculated...
+>
+>Processing TREES block from file
+>"Desktop/AmaranthusPhylogenyManuscript/FinalAlignments/ITS/ITS_NoMysTuc_MPTrees
+>.tre":
+>   Keeping: trees from file (replacing trees in memory)
+>
+>   20100 trees read from file
+]
+	tree Strict = [&U] (Pleuropter_ITS,(((AcanthoTX_ITS,Arenicola_ITS,(Floridanus_1_ITS,Floridanus_3_ITS),GreggiiLA_ITS,GreggiiTX_ITS,TuberculKS_1_ITS,TuberculKS_2_ITS,TuberculIL_1_ITS,TuberculIL_2_ITS),Australis_ITS,AustralisJRA_ITS,Cannabinus_ITS,(PumilNC_ITS,PumilNJ_ITS,PumilSC_ITS)),(Acutilobus_ITS,((CaudatusARG_ITS,CaudatusInd_ITS,CruentusInd_ITS,Cruentus9131_ITS,DubiusC_ITS,DubiusVZ_ITS,(HybridusMO1_ITS,HybridusMO2_ITS,HypochonInd_ITS,HypochonMX_ITS),HybridusGuat_ITS,QuitensisEC_ITS,QuitensisARG_ITS),ScariosusMO_ITS),((PowelliiB_ITS,PowelliiP_ITS,WrightiiTX1_ITS,WrightiiTX2_ITS),Retroflexus_ITS)),(AlbusCan_ITS,AlbusSA_ITS),(Anderss_ITS,Polygon_ITS),(BlitoidesIA_ITS,BlitoidesNM_ITS),((BlitumB_ITS,BlitumEmar_ITS,BlitumO_ITS,BlitumP_ITS),CardenMO2_ITS,(Crispus_ITS,Persimilis_ITS,StandleyPS_ITS,StandleyZ_ITS),((DeflexARG_ITS,DeflexC_ITS,DeflexPort_ITS),(VulgatissC_ITS,VulgatPS_ITS)),(ViridisBZ_ITS,ViridisJ_ITS)),Californicus_ITS,(Centralis_ITS,(GraecAscher_ITS,GraecThell_ITS)),ClementCran_ITS,ClementCress_ITS,Cochleitep_ITS,CrassipesTX1_ITS,CrassipesTX2_ITS,CrassipesEC_ITS,AffCuspid_ITS,Cuspid605_ITS,Cuspid699_ITS,((Fimbriat612_ITS,Fimbriat662_ITS,UrceolatusMO_ITS),(SquamulSC_ITS,SquamulST_ITS)),GraecSilvPT_ITS,GraecSilvEC_ITS,(Induratus_ITS,(Undul580_ITS,Undul652_ITS)),Interruptus_ITS,KloosPS_ITS,Looseri_ITS,Macrocarpus_ITS,Mitchellii_ITS,(MuricatusC_ITS,MuricatusPS_ITS),((Palmeri_ITS,PalmeriAZ2_ITS,PalmeriMX_ITS,WatsoniiMO_2_ITS,WatsoniiMO_1_ITS),(SpinosusNC_ITS,SpinosusS_ITS)),Praetermiss_ITS,RhombG_ITS,RhombR_ITS,SclerantSC_ITS,Tamaulip_ITS,(Thunberg1889_ITS,Thunberg2111_ITS),(TricolorMP_ITS,TricolorTN_ITS)),(ChamissoaMX_ITS,ChamissoaBO_ITS));
+end;

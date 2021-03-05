@@ -1,0 +1,243 @@
+#NEXUS
+[ID: 6580327380]
+begin taxa;
+	dimensions ntax=112;
+	taxlabels
+		AcanthoTX_C1
+		AcanthoTX_C4
+		Acutilobus
+		AlbusCan
+		AlbusSA
+		Anderssonii
+		Arenicola_C3
+		Arenicola_C6
+		Australis_C1
+		Australis_C2
+		AustralisJRA_C3
+		AustralisJRA_C5
+		BlitoidesNM
+		BlitumB
+		BlitumE
+		BlitumO
+		BlitumP
+		Californicus
+		Cannabinus_C8
+		CardenMO2
+		CaudatusARG
+		CaudatusInd
+		Centralis
+		ClemCran
+		ClementCress
+		Cochleitep
+		CrassipesTX1
+		CrassipesTX2
+		CrassipesEC
+		Crispus
+		CruentusInd
+		Cruentus9131
+		AffCuspid
+		Cuspid605
+		Cuspid699
+		DeflexARG
+		DeflexC
+		DeflexPort
+		DubiusC_C3
+		DubiusC_C6
+		DubiusVZ_C1
+		DubiusVZ_C5
+		Fimbriat612
+		Fimbriat662
+		Floridanus_C2
+		Floridanus_C4
+		GraecAsch
+		GraecSilvPT
+		GraecSilvEC
+		GraecThell
+		GreggiiLA
+		GreggiiTX
+		HybridusMO1
+		HybridusGuat
+		HybridusMO2
+		HypochonInd
+		HypochonMX
+		Induratus
+		Interruptus
+		KloosiPS
+		Looseri
+		Macrocarpus
+		Mitchellii
+		MuricatusC
+		MuricatusPS
+		Palmeri_C5
+		Palmeri_C8
+		PalmeriAZ_C1
+		PalmeriAZ_C4
+		PalmeriMX_C6
+		Persimilis
+		Polygonoides
+		PowelliiB
+		PowelliiP
+		Praetermis
+		PumilNC
+		PumilNJ
+		PumilSC
+		QuitensisEC
+		QuitensisARG
+		Retroflexus
+		RhombG
+		RhombeusR
+		ScariosusMO2
+		SclerantSC
+		SpinosusNC
+		SpinSum
+		SquamSC
+		SquamST
+		StandleyPS
+		StandleyZ
+		Tamaulip
+		Thunberg1889
+		Thunberg2111
+		TricolorMP
+		TricolorTN
+		TuberculKS_C2
+		TuberculKS_C4
+		TuberculIL_C6
+		TuberculIL_C8
+		Undul580
+		Undul650
+		UrceolatusMO2
+		ViridisBZ
+		ViridisJ
+		VulgatC
+		VulgatPS
+		Watsonii2_C1
+		Watsonii2_C3
+		WrightiiTX1
+		WrightiiTX2
+		Pleuropter
+		;
+end;
+begin trees;
+	translate
+		1	AcanthoTX_C1,
+		2	AcanthoTX_C4,
+		3	Acutilobus,
+		4	AlbusCan,
+		5	AlbusSA,
+		6	Anderssonii,
+		7	Arenicola_C3,
+		8	Arenicola_C6,
+		9	Australis_C1,
+		10	Australis_C2,
+		11	AustralisJRA_C3,
+		12	AustralisJRA_C5,
+		13	BlitoidesNM,
+		14	BlitumB,
+		15	BlitumE,
+		16	BlitumO,
+		17	BlitumP,
+		18	Californicus,
+		19	Cannabinus_C8,
+		20	CardenMO2,
+		21	CaudatusARG,
+		22	CaudatusInd,
+		23	Centralis,
+		24	ClemCran,
+		25	ClementCress,
+		26	Cochleitep,
+		27	CrassipesTX1,
+		28	CrassipesTX2,
+		29	CrassipesEC,
+		30	Crispus,
+		31	CruentusInd,
+		32	Cruentus9131,
+		33	AffCuspid,
+		34	Cuspid605,
+		35	Cuspid699,
+		36	DeflexARG,
+		37	DeflexC,
+		38	DeflexPort,
+		39	DubiusC_C3,
+		40	DubiusC_C6,
+		41	DubiusVZ_C1,
+		42	DubiusVZ_C5,
+		43	Fimbriat612,
+		44	Fimbriat662,
+		45	Floridanus_C2,
+		46	Floridanus_C4,
+		47	GraecAsch,
+		48	GraecSilvPT,
+		49	GraecSilvEC,
+		50	GraecThell,
+		51	GreggiiLA,
+		52	GreggiiTX,
+		53	HybridusMO1,
+		54	HybridusGuat,
+		55	HybridusMO2,
+		56	HypochonInd,
+		57	HypochonMX,
+		58	Induratus,
+		59	Interruptus,
+		60	KloosiPS,
+		61	Looseri,
+		62	Macrocarpus,
+		63	Mitchellii,
+		64	MuricatusC,
+		65	MuricatusPS,
+		66	Palmeri_C5,
+		67	Palmeri_C8,
+		68	PalmeriAZ_C1,
+		69	PalmeriAZ_C4,
+		70	PalmeriMX_C6,
+		71	Persimilis,
+		72	Polygonoides,
+		73	PowelliiB,
+		74	PowelliiP,
+		75	Praetermis,
+		76	PumilNC,
+		77	PumilNJ,
+		78	PumilSC,
+		79	QuitensisEC,
+		80	QuitensisARG,
+		81	Retroflexus,
+		82	RhombG,
+		83	RhombeusR,
+		84	ScariosusMO2,
+		85	SclerantSC,
+		86	SpinosusNC,
+		87	SpinSum,
+		88	SquamSC,
+		89	SquamST,
+		90	StandleyPS,
+		91	StandleyZ,
+		92	Tamaulip,
+		93	Thunberg1889,
+		94	Thunberg2111,
+		95	TricolorMP,
+		96	TricolorTN,
+		97	TuberculKS_C2,
+		98	TuberculKS_C4,
+		99	TuberculIL_C6,
+		100	TuberculIL_C8,
+		101	Undul580,
+		102	Undul650,
+		103	UrceolatusMO2,
+		104	ViridisBZ,
+		105	ViridisJ,
+		106	VulgatC,
+		107	VulgatPS,
+		108	Watsonii2_C1,
+		109	Watsonii2_C3,
+		110	WrightiiTX1,
+		111	WrightiiTX2,
+		112	Pleuropter
+		;
+   [Note: This tree contains information on the topology, 
+          branch lengths (if present), and the probability
+          of the partition indicated by the branch.]
+   tree con_50_majrule = (112:1.039635e-01,(((((1:2.946120e-03,2:4.389316e-02,((7:1.955876e-03,8:3.631101e-03)0.985:2.841263e-03,100:6.585986e-03)0.709:1.836145e-03,(76:7.510016e-04,77:7.503403e-04,78:7.126984e-04)1.000:4.217263e-03)0.587:3.259613e-03,97:4.025683e-03)0.953:1.016260e-02,98:1.070055e-02)1.000:1.108501e-02,((((3:2.725920e-03,21:1.719004e-03,22:7.115452e-04,31:7.349943e-04,32:1.719732e-03,40:1.788778e-03,42:7.602418e-04,53:6.897611e-04,54:7.182980e-04,55:1.681714e-03,56:7.587501e-04,57:6.900279e-04,(73:7.009358e-04,74:7.853328e-04)0.983:1.684425e-03,79:7.153316e-04,80:1.722032e-03,81:1.805336e-03,84:3.873770e-03,(110:7.699425e-04,111:8.240337e-04)0.908:1.733850e-03)0.972:1.718834e-03,(((39:7.310230e-04,41:6.866863e-04,86:7.501395e-04,87:7.136321e-04)1.000:8.059864e-03,66:8.015171e-03,68:8.079491e-03)0.996:2.833327e-03,109:2.856734e-03)0.850:1.765285e-03,(67:5.871566e-03,(69:1.720608e-03,70:3.958069e-03)1.000:3.788782e-03)0.996:3.681903e-03,108:6.799673e-03)1.000:1.194544e-02,((9:1.788652e-03,10:7.177407e-04,11:1.769123e-03,12:7.091131e-04)0.850:1.738856e-03,19:7.630714e-04,(51:7.089773e-04,52:7.266623e-04)1.000:7.999090e-03)1.000:1.435791e-02)0.991:5.208366e-03,((45:2.714831e-03,99:7.429980e-04)0.902:1.806198e-03,46:1.889735e-03)1.000:9.275592e-03)1.000:1.033198e-02)0.977:5.053787e-03,(((((14:6.963787e-04,16:6.735843e-04)0.945:1.651391e-03,15:7.437258e-04,17:1.871382e-03)1.000:6.540777e-03,23:5.183294e-03,(24:1.697086e-03,25:7.747846e-04)1.000:3.716008e-03,(26:7.016495e-04,33:7.027175e-04)1.000:2.836119e-03,(34:6.780671e-04,35:2.847038e-03)0.993:2.621337e-03,((47:1.738572e-03,50:3.791130e-03)0.965:1.696229e-03,(48:1.747157e-03,49:1.728786e-03)1.000:2.793671e-03,75:7.435179e-04)0.883:1.678521e-03,58:1.637675e-03,59:1.798306e-03,62:2.729528e-03,63:7.063024e-04,(82:1.127851e-02,83:2.734353e-03)0.996:3.851065e-03,(93:1.627523e-03,94:7.439417e-04)1.000:4.577813e-03,(95:7.261989e-04,96:6.859311e-04)0.990:2.291020e-03,(101:2.738877e-03,102:2.867701e-03)0.833:1.717266e-03)0.993:3.773132e-03,((64:7.153095e-04,65:6.924464e-04)1.000:6.170050e-03,(106:7.403967e-04,107:6.917029e-04)1.000:6.120571e-03)0.868:1.933680e-03)0.741:1.703313e-03,20:6.719175e-04,(((30:3.840264e-03,(71:7.267607e-04,90:7.095023e-04,91:6.423287e-04)0.912:1.759256e-03)1.000:5.883690e-03,61:3.892318e-03)0.866:1.755428e-03,60:3.952394e-03)0.999:2.704133e-03,((36:2.632793e-03,37:7.210428e-04,38:7.474886e-04)0.934:1.744165e-03,(104:6.995166e-04,105:1.734422e-03)0.994:1.811609e-03)1.000:2.761569e-03)1.000:1.600106e-02)0.970:8.605545e-03,((((4:6.580660e-04,5:3.498280e-03)0.977:1.680943e-03,18:6.480075e-03)0.859:1.529463e-03,13:5.939360e-03,85:6.795743e-03)0.947:3.081657e-03,(6:5.031689e-03,72:3.339297e-03)1.000:6.945632e-03,(27:2.233786e-03,28:1.490018e-03,29:1.489406e-03)1.000:5.863805e-03,((43:6.359190e-04,44:6.362914e-04)1.000:5.847367e-03,103:8.901333e-03)0.980:3.335512e-03,(88:6.015100e-04,89:6.233868e-04)1.000:5.841011e-03,92:5.833625e-03)0.969:1.051511e-02);
+
+   [Note: This tree contains information only on the topology
+          and branch lengths (median of the posterior probability density).]
+   tree con_50_majrule = (112:1.039635e-01,(((((1:2.946120e-03,2:4.389316e-02,((7:1.955876e-03,8:3.631101e-03):2.841263e-03,100:6.585986e-03):1.836145e-03,(76:7.510016e-04,77:7.503403e-04,78:7.126984e-04):4.217263e-03):3.259613e-03,97:4.025683e-03):1.016260e-02,98:1.070055e-02):1.108501e-02,((((3:2.725920e-03,21:1.719004e-03,22:7.115452e-04,31:7.349943e-04,32:1.719732e-03,40:1.788778e-03,42:7.602418e-04,53:6.897611e-04,54:7.182980e-04,55:1.681714e-03,56:7.587501e-04,57:6.900279e-04,(73:7.009358e-04,74:7.853328e-04):1.684425e-03,79:7.153316e-04,80:1.722032e-03,81:1.805336e-03,84:3.873770e-03,(110:7.699425e-04,111:8.240337e-04):1.733850e-03):1.718834e-03,(((39:7.310230e-04,41:6.866863e-04,86:7.501395e-04,87:7.136321e-04):8.059864e-03,66:8.015171e-03,68:8.079491e-03):2.833327e-03,109:2.856734e-03):1.765285e-03,(67:5.871566e-03,(69:1.720608e-03,70:3.958069e-03):3.788782e-03):3.681903e-03,108:6.799673e-03):1.194544e-02,((9:1.788652e-03,10:7.177407e-04,11:1.769123e-03,12:7.091131e-04):1.738856e-03,19:7.630714e-04,(51:7.089773e-04,52:7.266623e-04):7.999090e-03):1.435791e-02):5.208366e-03,((45:2.714831e-03,99:7.429980e-04):1.806198e-03,46:1.889735e-03):9.275592e-03):1.033198e-02):5.053787e-03,(((((14:6.963787e-04,16:6.735843e-04):1.651391e-03,15:7.437258e-04,17:1.871382e-03):6.540777e-03,23:5.183294e-03,(24:1.697086e-03,25:7.747846e-04):3.716008e-03,(26:7.016495e-04,33:7.027175e-04):2.836119e-03,(34:6.780671e-04,35:2.847038e-03):2.621337e-03,((47:1.738572e-03,50:3.791130e-03):1.696229e-03,(48:1.747157e-03,49:1.728786e-03):2.793671e-03,75:7.435179e-04):1.678521e-03,58:1.637675e-03,59:1.798306e-03,62:2.729528e-03,63:7.063024e-04,(82:1.127851e-02,83:2.734353e-03):3.851065e-03,(93:1.627523e-03,94:7.439417e-04):4.577813e-03,(95:7.261989e-04,96:6.859311e-04):2.291020e-03,(101:2.738877e-03,102:2.867701e-03):1.717266e-03):3.773132e-03,((64:7.153095e-04,65:6.924464e-04):6.170050e-03,(106:7.403967e-04,107:6.917029e-04):6.120571e-03):1.933680e-03):1.703313e-03,20:6.719175e-04,(((30:3.840264e-03,(71:7.267607e-04,90:7.095023e-04,91:6.423287e-04):1.759256e-03):5.883690e-03,61:3.892318e-03):1.755428e-03,60:3.952394e-03):2.704133e-03,((36:2.632793e-03,37:7.210428e-04,38:7.474886e-04):1.744165e-03,(104:6.995166e-04,105:1.734422e-03):1.811609e-03):2.761569e-03):1.600106e-02):8.605545e-03,((((4:6.580660e-04,5:3.498280e-03):1.680943e-03,18:6.480075e-03):1.529463e-03,13:5.939360e-03,85:6.795743e-03):3.081657e-03,(6:5.031689e-03,72:3.339297e-03):6.945632e-03,(27:2.233786e-03,28:1.490018e-03,29:1.489406e-03):5.863805e-03,((43:6.359190e-04,44:6.362914e-04):5.847367e-03,103:8.901333e-03):3.335512e-03,(88:6.015100e-04,89:6.233868e-04):5.841011e-03,92:5.833625e-03):1.051511e-02);
+end;

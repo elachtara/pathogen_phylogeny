@@ -1,0 +1,40 @@
+#NEXUS 
+
+Begin trees;  [Treefile saved Tue Jan  3 21:33:55 2017]
+[!
+>Consensus of 20000 trees
+>
+>Source of trees from which consensus(es) calculated...
+>Heuristic search settings:
+>  Optimality criterion = parsimony
+>    Character-status summary:
+>      33 characters are excluded
+>      Of the remaining 943 included characters:
+>        All characters are of type 'unord'
+>        All characters have equal weight
+>        610 characters are constant
+>        127 variable characters are parsimony-uninformative
+>        Number of (included) parsimony-informative characters = 206
+>    Gaps are treated as "missing"
+>    Multistate taxa interpreted as uncertainty
+>  Starting tree(s) obtained via stepwise addition
+>  Addition sequence: simple (reference taxon = AcanthoTX C1)
+>  Number of trees held at each step during stepwise addition = 1
+>  Branch-swapping algorithm: tree-bisection-reconnection (TBR)
+>  Steepest descent option not in effect
+>  Initial 'MaxTrees' setting = 20000
+>  Branches collapsed (creating polytomies) if maximum branch length is zero
+>  'MulTrees' option in effect
+>  Topological constraints not enforced
+>  Trees are unrooted
+>
+>Heuristic search completed
+>   Total number of rearrangements tried = 5.2581e+09
+>   Score of best tree(s) found = 566
+>   Number of trees retained = 20000
+>   Note: Effectiveness of search may have been diminished due to tree-buffer
+>         overflow.
+>   Time used = 01:15:32 (CPU time = 01:04:59.5)
+]
+	tree Strict = [&U] (Pleuropter,(((((AcanthoTX_C1,(Arenicola_C3,Arenicola_C6),(PumilNC,PumilNJ,PumilSC),TuberculKS_C2,TuberculIL_C8),AcanthoTX_C4),TuberculKS_C4),(((Acutilobus,CaudatusARG,CaudatusInd,CruentusInd,Cruentus9131,(((DubiusC_C3,DubiusVZ_C1,SpinosusNC,SpinSum),Palmeri_C5,PalmeriAZ_C1),Watsonii2_C3),DubiusC_C6,DubiusVZ_C5,HybridusMO1,HybridusGuat,HybridusMO2,HypochonInd,HypochonMX,(Palmeri_C8,(PalmeriAZ_C4,PalmeriMX_C6)),(PowelliiB,PowelliiP),QuitensisEC,QuitensisARG,Retroflexus,ScariosusMO2,Watsonii2_C1,(WrightiiTX1,WrightiiTX2)),(((Australis_C1,Australis_C2,AustralisJRA_C3,AustralisJRA_C5),Cannabinus_C8),(GreggiiLA,GreggiiTX))),(Floridanus_C2,Floridanus_C4,TuberculIL_C6))),(((((((((BlitumB,BlitumO),BlitumE),BlitumP),Centralis),(TricolorMP,TricolorTN)),(ClemCran,ClementCress),(Cochleitep,AffCuspid),(Cuspid605,Cuspid699),((GraecAsch,GraecThell),(GraecSilvPT,GraecSilvEC),Praetermis),Induratus,Interruptus,Macrocarpus,Mitchellii,(RhombG,RhombeusR),(Thunberg1889,Thunberg2111),(Undul580,Undul650)),((MuricatusC,MuricatusPS),(VulgatC,VulgatPS))),((DeflexARG,DeflexC,DeflexPort),(ViridisBZ,ViridisJ))),CardenMO2,(((Crispus,(Persimilis,StandleyPS,StandleyZ)),Looseri),KloosiPS))),((((AlbusCan,AlbusSA),Californicus),BlitoidesNM,SclerantSC),(Anderssonii,Polygonoides),(CrassipesTX1,CrassipesTX2,CrassipesEC),(((Fimbriat612,Fimbriat662),UrceolatusMO2),(SquamSC,SquamST)),Tamaulip));
+end;

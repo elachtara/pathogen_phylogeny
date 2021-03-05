@@ -1,0 +1,16 @@
+#NEXUS 
+
+Begin trees;  [Treefile saved Mon Dec  1 19:31:56 2014]
+[!
+>Consensus of 16 trees
+>
+>Source of trees from which consensus(es) calculated...
+>
+>Processing TREES block from file
+>"Desktop/AmaranthusPhylogenyManuscript/FinalAlignments/A36/2014A36_NMT_MPtrees_
+>sic.tre":
+>   Keeping: trees from file (replacing trees in memory)
+>   16 trees read from file
+]
+	tree Strict = [&U] (Pleuropter,((((((AcanthoTX1,AcanthoTX3),(Arenicola,((Cannabinus2,Cannabinus3),TuberculKS_1,TuberculIL_4),(Floridanus1,GreggiiLA1,GreggiiTX3,TuberculKS_4)),(AustralisFL1,AustralisFL2_2,AustralisFL2_3),(PumilusNC,PumilusNJ,PumilusSC)),((Acutilobus,CaudatusARG,CaudatusIND,CruentusIND,CruentusMX,DubiusCU4,DubiusVZ3,HybridusMO1,HybridusGT,HybridusMO2,HypochonIND,HypochonMX,(PalmeriAZ1_1_2,PowelliiB,PowelliiP,Retroflexus,WrightiiTX1,WrightiiTX2),QuitensisEC,QuitensisARG,Scariosus),(((DubiusCU1,DubiusVZ4),PalmeriMX4),(SpinosusNC,SpinosusMO)),((PalmeriAZ1_3_2,PalmeriAZ2_2,PalmeriAZ2_3),(Watsonii_4_2,Watsonii_3_2)))),((FimbriatAZ1,FimbriatAZ2),(SquamulEC1,SquamulEC2),Urceolatus)),((AlbusCan,AlbusSA,BlitoidesIA,BlitoidesNM,Californicus),(((BlitumB,(BlitumE,BlitumP),BlitumO),Centralis,(ClementAU1,ClementAU2),Cochleitep,AffCuspid,CuspidAU1,CuspidAU2,((GraecAsch,GraecSilvPT,GraecSilvEC,GraecThell),(ThunbergNA1,ThunbergNA2)),Induratus,Interruptus,Macrocarpus,Mitchellii,Praetermissus,(RhombeusAU1,RhombeusAU2),(TricolorIND1,TricolorIND2),UndulatusAU1,UndulatusAU2),Cardenas,Crispus,(DeflexARG1,DeflexARG2,DeflexPort),Kloosianus,Looseri,((MuricatusARG1,MuricatusARG2),(VulgatARG1,VulgatARG2)),Persimilis,StandleyARG1,StandleyARG2,(ViridisBR,ViridisINA)),SclerantSC),(Anderss,Polygon),CrassipesTX1,CrassipesTX2,CrassipesEC),Tamaulip),(ChamissoaMX,ChamissoaBO));
+end;
