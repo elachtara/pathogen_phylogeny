@@ -77,6 +77,22 @@ get_sharing(data = genus_species, path_to_save = "data/sharing/genus.sp.sharing.
 get_sharing(data = species_genus, path_to_save = "data/sharing/species.gen.sharing.rda")
 ```
 
+
+```{r Create WOS prompt}
+# Load cleaned data
+load("data/clean_pathogen.rda")
+
+# Pull the host names (929)
+species <- as.data.frame(unique(species_species$host))
+colnames(species) <- "Host"
+species <- species %>% mutate(Search = paste("TI='", Host, "' OR AB='", 
+                                             Host, "' OR AK='", Host, "'", sep = ""))
+writexl::write_xlsx(species, "data/WOS.xlsx")
+
+```
+
+
+
 ```{r Visualize pathogen sharing}
 load("data/clean_sharing.rda")
 p <- sharing_clean %>%
