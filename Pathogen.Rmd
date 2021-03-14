@@ -15,7 +15,9 @@ library(ggplot2)
 library(tidyr)
 library(kableExtra)
 library(readxl)
+library(readr)
 source('functions/Sharing_index.R')
+
 # Define color pallette
 mypal <- cbind(palette(RColorBrewer::brewer.pal(n = 8, name = "Set2")),
                palette(RColorBrewer::brewer.pal(n = 12, name = "Paired")))
@@ -60,6 +62,19 @@ species_species <- clean_pathogen %>% filter(!grepl('sp.', host)) %>% filter(!gr
 # Species host, genus pathogen
 species_genus <- clean_pathogen %>% filter(!grepl('sp.', host)) %>% filter(!grepl('sp.', sci_name)) %>% separate(sci_name, c('sci_name', 'species2') , sep = " ") %>%
   select(-species2) %>%  distinct()
+
+# Read in WOS
+WOS_citations <- read_csv("data/WOS/WOS citations - Sheet1.csv")
+WOS_species <- WOS_citations %>% rename(host = Host) %>% select(host, WOS)
+WOS_genus <- WOS_citations %>% separate(Host, c('host', 'species2') , sep = " ") %>% 
+  group_by(host) %>% 
+  summarize(WOS = sum(WOS))
+
+# Join WOS with other
+species_species <- full_join(species_species, WOS_species, by = "host")
+species_genus <- full_join(species_genus, WOS_species, by = "host")
+genus_species <- full_join(genus_species, WOS_genus, by = "host")
+genus_genus <- full_join(genus_genus, WOS_genus, by = "host")
 
 # Save the cleaned/corrected data
 save(genus_genus, genus_species, species_species, species_genus, file = "data/clean_pathogen.rda")
