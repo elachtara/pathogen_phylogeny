@@ -92,32 +92,19 @@ get_sharing(data = genus_species, path_to_save = "data/sharing/genus.sp.sharing.
 get_sharing(data = species_genus, path_to_save = "data/sharing/species.gen.sharing.rda")
 ```
 
-
-```{r Create WOS prompt}
-# Load cleaned data
+```{r WOS distribution}
+# Load pathogen data
 load("data/clean_pathogen.rda")
 
-# Pull the host names (929)
-species <- as.data.frame(unique(species_species$host))
-colnames(species) <- "Host"
-species <- species %>% mutate(Search = paste("TI='", Host, "' OR AB='", 
-                                             Host, "' OR AK='", Host, "'", sep = ""))
-writexl::write_xlsx(species, "data/WOS.xlsx")
-
-```
-
-
-
-```{r Visualize pathogen sharing}
-load("data/clean_sharing.rda")
-p <- sharing_clean %>%
-  mutate(percent = as.numeric(percent)) %>%
-  filter(percent > 0) %>%
-  ggplot(aes(x = percent))+
-  geom_density(col = mypal[8])+
+# Genus WOS plot
+p1 <- genus_genus %>%
+  select(host, WOS) %>%
+  distinct(host, .keep_all = TRUE) %>%
+  ggplot(aes(x = log(WOS))) +
+  geom_density(fill = mypal[9])+
   theme_minimal()+
-  labs(y = "Count", x = "% of Pathogens Shared")+
-  labs(title = "Nonzero distribution of host-pathogen sharing index")+
+  labs(y = "Count", x = "log(WOS Citations)")+
+  labs(title = "WOS Citations by Genus")+
   theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
         axis.title.y = element_text(size = 12, face = "bold"),
         axis.title.x = element_text(size = 12, face = "bold"),
@@ -125,10 +112,122 @@ p <- sharing_clean %>%
         axis.text.y = element_text(size = 10),
         legend.position = "none")
 
-ggsave("figures/sharing.dis.pdf",
-       plot = p,
+ggsave("figures/WOS/genus.pdf",
+       plot = p1,
        units = "in",
-       width = 8,
+       width = 5,
+       height = 5,
+       useDingbats = FALSE)
+
+p2 <- species_species %>%
+  select(host, WOS) %>%
+  distinct(host, .keep_all = TRUE) %>%
+  ggplot(aes(x = log(WOS))) +
+  geom_density(fill = mypal[13])+
+  theme_minimal()+
+  labs(y = "Count", x = "log(WOS Citations)")+
+  labs(title = "WOS Citations by Species")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "none")
+
+ggsave("figures/WOS/species.pdf",
+       plot = p2,
+       units = "in",
+       width = 5,
+       height = 5,
+       useDingbats = FALSE)
+```
+
+```{r Visualize pathogen sharing}
+# Genus host, genus pathogen
+load("data/sharing/genus.sharing.rda")
+p1 <- as.data.frame(sharing) %>%
+  mutate(percent = as.numeric(shared)/(as.numeric(org1.count) + as.numeric(org2.count))) %>%
+  ggplot(aes(x = log(percent)))+
+  geom_density(col = mypal[8])+
+  theme_minimal()+
+  labs(y = "Count", x = "log(Jaccard Index)")+
+  labs(title = "Host pathogen sharing (Genus-Genus)")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "none")
+ggsave("figures/JAC/genus.genus.pdf",
+       plot = p1,
+       units = "in",
+       width = 5,
+       height = 5,
+       useDingbats = FALSE)
+
+# Genus host, species pathogen
+load("data/sharing/genus.sp.sharing.rda")
+p2 <- as.data.frame(sharing) %>%
+  mutate(percent = as.numeric(shared)/(as.numeric(org1.count) + as.numeric(org2.count))) %>%
+  ggplot(aes(x = log(percent)))+
+  geom_density(col = mypal[4])+
+  theme_minimal()+
+  labs(y = "Count", x = "log(Jaccard Index)")+
+  labs(title = "Host pathogen sharing (Genus-Species)")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "none")
+ggsave("figures/JAC/genus.sp.pdf",
+       plot = p2,
+       units = "in",
+       width = 5,
+       height = 5,
+       useDingbats = FALSE)
+
+# Species host, species pathogen
+load("data/sharing/species.sharing.rda")
+p3 <- as.data.frame(sharing) %>%
+  mutate(percent = as.numeric(shared)/(as.numeric(org1.count) + as.numeric(org2.count))) %>%
+  ggplot(aes(x = log(percent)))+
+  geom_density(col = mypal[2])+
+  theme_minimal()+
+  labs(y = "Count", x = "log(Jaccard Index)")+
+  labs(title = "Host pathogen sharing (Species-Species)")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "none")
+ggsave("figures/JAC/species.pdf",
+       plot = p3,
+       units = "in",
+       width = 5,
+       height = 5,
+       useDingbats = FALSE)
+
+# Species host, genus pathogen
+load("data/sharing/species.gen.sharing.rda")
+p4 <- as.data.frame(sharing) %>%
+  mutate(percent = as.numeric(shared)/(as.numeric(org1.count) + as.numeric(org2.count))) %>%
+  ggplot(aes(x = log(percent)))+
+  geom_density(col = mypal[1])+
+  theme_minimal()+
+  labs(y = "Count", x = "log(Jaccard Index)")+
+  labs(title = "Host pathogen sharing (Species-Genus)")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "none")
+ggsave("figures/JAC/species.gen.pdf",
+       plot = p4,
+       units = "in",
+       width = 5,
        height = 5,
        useDingbats = FALSE)
 ```
