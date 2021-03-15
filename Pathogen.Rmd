@@ -147,10 +147,11 @@ ggsave("figures/WOS/species.pdf",
 load("data/sharing/genus.sharing.rda")
 p1 <- as.data.frame(sharing) %>%
   mutate(percent = as.numeric(shared)/(as.numeric(org1.count) + as.numeric(org2.count))) %>%
-  ggplot(aes(x = log(percent)))+
+  filter(percent > 0) %>% 
+  ggplot(aes(x = percent))+
   geom_density(fill = mypal[8])+
   theme_minimal()+
-  labs(y = "Count", x = "log(Jaccard Index)")+
+  labs(y = "Count", x = "Jaccard Index")+
   labs(title = "Host pathogen sharing (Genus-Genus)")+
   theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
         axis.title.y = element_text(size = 12, face = "bold"),
@@ -169,10 +170,11 @@ ggsave("figures/JAC/genus.genus.pdf",
 load("data/sharing/genus.sp.sharing.rda")
 p2 <- as.data.frame(sharing) %>%
   mutate(percent = as.numeric(shared)/(as.numeric(org1.count) + as.numeric(org2.count))) %>%
-  ggplot(aes(x = log(percent)))+
+  filter(percent > 0) %>% 
+  ggplot(aes(x = percent))+
   geom_density(fill = mypal[4])+
   theme_minimal()+
-  labs(y = "Count", x = "log(Jaccard Index)")+
+  labs(y = "Count", x = "Jaccard Index")+
   labs(title = "Host pathogen sharing (Genus-Species)")+
   theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
         axis.title.y = element_text(size = 12, face = "bold"),
@@ -191,10 +193,11 @@ ggsave("figures/JAC/genus.sp.pdf",
 load("data/sharing/species.sharing.rda")
 p3 <- as.data.frame(sharing) %>%
   mutate(percent = as.numeric(shared)/(as.numeric(org1.count) + as.numeric(org2.count))) %>%
-  ggplot(aes(x = log(percent)))+
+  filter(percent > 0) %>% 
+  ggplot(aes(x = percent))+
   geom_density(fill = mypal[2])+
   theme_minimal()+
-  labs(y = "Count", x = "log(Jaccard Index)")+
+  labs(y = "Count", x = "Jaccard Index")+
   labs(title = "Host pathogen sharing (Species-Species)")+
   theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
         axis.title.y = element_text(size = 12, face = "bold"),
@@ -213,10 +216,11 @@ ggsave("figures/JAC/species.pdf",
 load("data/sharing/species.gen.sharing.rda")
 p4 <- as.data.frame(sharing) %>%
   mutate(percent = as.numeric(shared)/(as.numeric(org1.count) + as.numeric(org2.count))) %>%
-  ggplot(aes(x = log(percent)))+
+  filter(percent > 0) %>% 
+  ggplot(aes(x = percent))+
   geom_density(fill = mypal[1])+
   theme_minimal()+
-  labs(y = "Count", x = "log(Jaccard Index)")+
+  labs(y = "Count", x = "Jaccard Index")+
   labs(title = "Host pathogen sharing (Species-Genus)")+
   theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
         axis.title.y = element_text(size = 12, face = "bold"),
