@@ -142,6 +142,88 @@ ggsave("figures/WOS/species.pdf",
        useDingbats = FALSE)
 ```
 
+```{r log(WOS) vs log(PSR)}
+# Load pathogen data
+load("data/clean_pathogen.rda")
+
+# Species plot
+p1 <- species_species %>% 
+  group_by(host) %>% 
+  summarize(PSR = n(), WOS = WOS) %>%
+  ggplot(aes(x = log(WOS), y = log(PSR))) +
+  geom_point(col = mypal[9], size = 1)+
+  geom_smooth(method = "lm", se = FALSE, size = 0.3, col = mypal[9])+
+  theme_minimal()+
+  labs(y = "log(PSR)", x = "log(WOS Citations)")+
+  labs(title = "WOS Citations vs PSR by species")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "none")
+
+ggsave("figures/PSR/species.pdf",
+       plot = p1,
+       units = "in",
+       width = 6,
+       height = 6,
+       useDingbats = FALSE)
+
+
+# Genus plot
+p2 <- genus_genus %>% 
+  group_by(host) %>% 
+  summarize(PSR = n(), WOS = WOS) %>%
+  ggplot(aes(x = log(WOS), y = log(PSR))) +
+  geom_point(col = mypal[15], size = 1)+
+  geom_smooth(method = "lm", se = FALSE, size = 0.3, col = mypal[15])+
+  theme_minimal()+
+  labs(y = "log(PSR)", x = "log(WOS Citations)")+
+  labs(title = "WOS Citations vs PSR by genus")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "none")
+
+ggsave("figures/PSR/genus.pdf",
+       plot = p2,
+       units = "in",
+       width = 6,
+       height = 6,
+       useDingbats = FALSE)
+
+# Genus + species plot
+genus_genus$group = "Genus"
+species_species$group = "Species"
+p3 <- rbind(species_species, genus_genus) %>% 
+  group_by(host) %>% 
+  summarize(PSR = n(), WOS = WOS, group = group) %>%
+  ggplot(aes(x = log(WOS), y = log(PSR), col = group)) +
+  geom_point(size = 1)+
+  scale_colour_manual(values = mypal[3:4])+
+  geom_smooth(method = "lm", se = FALSE, size = 0.3, col = mypal[2])+
+  theme_minimal()+
+  labs(y = "log(PSR)", x = "log(WOS Citations)", col = "taxonomy level")+
+  labs(title = "WOS Citations vs PSR by genus")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "bottom")
+
+ggsave("figures/PSR/both.pdf",
+       plot = p3,
+       units = "in",
+       width = 6,
+       height = 6,
+       useDingbats = FALSE)
+```
+
+
 ```{r Visualize pathogen sharing}
 # Genus host, genus pathogen
 load("data/sharing/genus.sharing.rda")
