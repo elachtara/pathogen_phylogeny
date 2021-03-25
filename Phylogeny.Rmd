@@ -25,9 +25,16 @@ mypal <- cbind(palette(RColorBrewer::brewer.pal(n = 8, name = "Set2")),
 
 ```{r Data wrangle}
 # Read in Data
-cladogram <- read_excel("data/phylo/cladogram.xlsx", sheet = "Sheet1") %>% clean_names() 
+cladogram <- read_excel("data/phylo/cladogram.xlsx", sheet = "Sheet1") %>% clean_names() %>% select(-notes)
 
-all_order <- unique(all_fams$hostfam)
+# Load in clean data if needed
+load("data/clean_pathogen.rda")
+# split up into species genus
+justnames <- species_species %>% 
+  separate(host, c('genus', 'species') , sep = " ") %>%
+  select(genus, species)
 
-
+# join into cladogram
+phylo_dist <- full_join(justnames, cladogram, by = "genus")  %>% na.omit()
+save(phylo_dist, file = "data/phylo/joined_dist.rda")
 ```
