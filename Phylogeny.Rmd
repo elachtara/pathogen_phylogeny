@@ -17,7 +17,6 @@ library(tidyr)
 library(kableExtra)
 library(readxl)
 library(readr)
-source('functions/Sharing_index.R')
 
 # Define color pallette
 mypal <- cbind(palette(RColorBrewer::brewer.pal(n = 8, name = "Set2")),
@@ -26,57 +25,9 @@ mypal <- cbind(palette(RColorBrewer::brewer.pal(n = 8, name = "Set2")),
 
 ```{r Data wrangle}
 # Read in Data
-fam1 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet1") %>% clean_names() 
-fam2 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet2") %>% clean_names()
-fam3 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet3") %>% clean_names() 
-all_fams <- rbind(fam1, fam2, fam3)
+cladogram <- read_excel("data/phylo/cladogram.xlsx", sheet = "Sheet1") %>% clean_names() 
 
 all_order <- unique(all_fams$hostfam)
 
-# Synonymy Correction
-# Read in keys, replace raw name with new name
-# Plants name correction
-plants_key <- read_excel("data/key.xlsx", sheet = "plants")
-id <- match(all_fams$host, plants_key$raw_name)
-all_fams$host <- plants_key$new_name[id]
-rm(id)
 
-# Pathogen name correction
-fungi_key <- read_excel("data/key.xlsx", sheet = "fungi")
-id <- match(all_fams$sci_name, fungi_key$raw_name)
-all_fams$sci_name <- fungi_key$new_name[id]
-rm(id)
-
-# Remove duplicate entries
-clean_pathogen <- all_fams %>% select(sci_name, host) %>% distinct()
-
-# Genus host, genus pathogen
-genus_genus <- clean_pathogen %>% separate(host, c('host', 'species') , sep = " ") %>% separate(sci_name, c('sci_name', 'species2') , sep = " ") %>%
-  select(-species, -species2) %>% distinct
-
-# Genus host, species pathogen
-genus_species <- clean_pathogen %>% separate(host, c('host', 'species') , sep = " ") %>% filter(!grepl('sp.', sci_name)) %>% select(-species) %>% distinct()
-
-# Species host, species pathogen
-species_species <- clean_pathogen %>% filter(!grepl('sp.', host)) %>% filter(!grepl('sp.', sci_name))%>% distinct()
-
-# Species host, genus pathogen
-species_genus <- clean_pathogen %>% filter(!grepl('sp.', host)) %>% filter(!grepl('sp.', sci_name)) %>% separate(sci_name, c('sci_name', 'species2') , sep = " ") %>%
-  select(-species2) %>%  distinct()
-
-# Read in WOS
-WOS_citations <- read_csv("data/WOS/WOS citations - Sheet1.csv")
-WOS_species <- WOS_citations %>% rename(host = Host) %>% select(host, WOS)
-WOS_genus <- WOS_citations %>% separate(Host, c('host', 'species2') , sep = " ") %>% 
-  group_by(host) %>% 
-  summarize(WOS = sum(WOS))
-
-# Join WOS with other
-species_species <- full_join(species_species, WOS_species, by = "host")
-species_genus <- full_join(species_genus, WOS_species, by = "host")
-genus_species <- full_join(genus_species, WOS_genus, by = "host")
-genus_genus <- full_join(genus_genus, WOS_genus, by = "host")
-
-# Save the cleaned/corrected data
-save(genus_genus, genus_species, species_species, species_genus, file = "data/clean_pathogen.rda")
 ```
