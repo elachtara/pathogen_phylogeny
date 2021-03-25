@@ -78,7 +78,6 @@ genus_genus <- full_join(genus_genus, WOS_genus, by = "host")
 
 # Save the cleaned/corrected data
 save(genus_genus, genus_species, species_species, species_genus, file = "data/clean_pathogen.rda")
-
 ```
 
 ```{r Create Jaccard Index}
@@ -92,7 +91,7 @@ get_sharing(data = genus_species, path_to_save = "data/sharing/genus.sp.sharing.
 get_sharing(data = species_genus, path_to_save = "data/sharing/species.gen.sharing.rda")
 ```
 
-```{r WOS distribution}
+```{r Visualize WOS distribution}
 # Load pathogen data
 load("data/clean_pathogen.rda")
 
@@ -142,7 +141,7 @@ ggsave("figures/WOS/species.pdf",
        useDingbats = FALSE)
 ```
 
-```{r log(WOS) vs log(PSR)}
+```{r Visualize log(WOS) vs log(PSR)}
 # Load pathogen data
 load("data/clean_pathogen.rda")
 
@@ -222,7 +221,6 @@ ggsave("figures/PSR/both.pdf",
        height = 6,
        useDingbats = FALSE)
 ```
-
 
 ```{r Visualize pathogen sharing}
 # Genus host, genus pathogen
@@ -318,55 +316,7 @@ ggsave("figures/JAC/species.gen.pdf",
        useDingbats = FALSE)
 ```
 
-```{r Initial, echo =  FALSE, warning = FALSE}
-# Total observations per family
-all_fams %>% group_by(Fam) %>% 
-  count() %>% 
-  rename('Total' = n) %>%
-  kable(caption = "Total observations per family") %>% 
-  kable_classic(full_width = F, html_font = "Cambria")
 
-# Unique Hosts and Pathogens
-hosts <- all_fams %>% select(Fam, host) %>%
-  unique() %>% 
-  group_by(Fam) %>% 
-  count() %>% 
-  rename('Hosts' = n)
-pathogens <- all_fams %>% select(Fam, sci_name) %>% 
-  unique() %>% 
-  group_by(Fam) %>% 
-  count() %>% 
-  rename('Pathogens' = n) 
-
-# Plot of host and pathogen numbers by Family
-cbind(hosts, pathogens[,2]) %>% gather(key = 'Type', value = 'Value', 2:3)  %>%
-  ggplot(aes(x = Fam, y = Value, fill = Type)) +
-  geom_col(position = "dodge")+
-  scale_fill_manual(values = mypal[4:5])+
-  theme_minimal()+
-  labs(y = "Count", x = "Family", fill = "")+
-  labs(title = "Number of unique hosts and pathogens by Family")+
-  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-        axis.title.y = element_text(size = 12, face = "bold"),
-        axis.title.x = element_text(size = 12, face = "bold"),
-        axis.text.x = element_text(size = 10),
-        axis.text.y = element_text(size = 10),
-        legend.position = "bottom")
-
-# Plot of literature effort by Family
-ggplot(all_fams, aes(x = as.numeric(litnum), col = Fam))+
-  geom_density()+
-  scale_colour_manual(values = mypal[4:6])+
-  theme_minimal()+
-  labs(y = "Count", x = "Literature Effort", col = "")+
-  labs(title = "Distribution of literature effort by Family")+
-  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-        axis.title.y = element_text(size = 12, face = "bold"),
-        axis.title.x = element_text(size = 12, face = "bold"),
-        axis.text.x = element_text(size = 10),
-        axis.text.y = element_text(size = 10),
-        legend.position = "bottom")
-```
 
 
 
