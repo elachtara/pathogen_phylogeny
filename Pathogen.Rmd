@@ -330,10 +330,18 @@ load("data/clean_pathogen.rda")
 load("data/sharing/species.sharing.rda")
 load("data/phylo/species.dist.rda")
 species_species$org1 = species_species$host
-
 species_all <- full_join(distmat, species_species, by = "org1")
-species_all <- full_join(species_all, sharing, by = "org1")
-lm()
+species_all <- species_all %>% select(-host, -sci_name) %>%
+  distinct() %>%
+  mutate(distance = as.numeric(distance)) %>%
+  mutate(ID = paste(org1, org2, sep = "_"))
+sharing <- sharing %>%
+  mutate(ID = paste(org1, org2, sep = "_"))
+id <- match(species_all$ID, sharing$ID)
+species_all$shared.org <- sharing$shared.org[id]
+
+
+
 
 ```
 
