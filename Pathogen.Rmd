@@ -68,7 +68,7 @@ WOS_citations <- read_csv("data/WOS/WOS citations - Sheet1.csv")
 WOS_species <- WOS_citations %>% rename(host = Host) %>% select(host, WOS)
 WOS_genus <- WOS_citations %>% separate(Host, c('host', 'species2') , sep = " ") %>% 
   group_by(host) %>% 
-  summarize(WOS = sum(WOS))
+  summarize(WOS = sum(WOS)) # sum of WOS
 
 # Join WOS with other
 species_species <- full_join(species_species, WOS_species, by = "host")
