@@ -17,6 +17,7 @@ library(tidyr)
 library(kableExtra)
 library(readxl)
 library(readr)
+ source('functions/Cladogram.R')
 
 # Define color pallette
 mypal <- cbind(palette(RColorBrewer::brewer.pal(n = 8, name = "Set2")),
@@ -35,7 +36,15 @@ justnames <- species_species %>%
   select(genus, species) %>%
   mutate(gspec = paste(genus, species, sep = " "))
 
-# join into cladogram
+# join into cladogram9
 phylo_dist <- full_join(justnames, cladogram, by = "genus")  %>%  na.omit() %>% distinct()
 save(phylo_dist, file = "data/phylo/joined_dist.rda")
+
+# Run clado distances for species
+load("data/phylo/joined_dist.rda")
+get_cladogram(data = phylo_dist, "data/phylo/species.dist.rda")
+
+colnames(distmat) <- c("org1", "org2", "distance")
+distmat <- as.data.frame(distmat)
+save(distmat, file = "data/phylo/species.dist.rda")
 ```

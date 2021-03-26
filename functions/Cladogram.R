@@ -1,7 +1,7 @@
 
 
 # Function to get Jaccard index
-get_cladogram <- function(data){
+get_cladogram <- function(data, filename){
   
   # Initiate for storage
   species <- unique(data$gspec)
@@ -59,13 +59,11 @@ get_cladogram <- function(data){
   }
   
   # Save data
-  save(distmat, file = "data/phylo/clado_dist.rda")
+  save(distmat, file = filename)
   
 }
 
 
-load("data/phylo/joined_dist.rda")
 
-get_cladogram(data = phylo_dist)
 
 

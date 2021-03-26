@@ -80,7 +80,7 @@ genus_genus <- full_join(genus_genus, WOS_genus, by = "host")
 save(genus_genus, genus_species, species_species, species_genus, file = "data/clean_pathogen.rda")
 ```
 
-```{r Create Jaccard Index}
+```{r Create sharing index}
 # Load in clean data if needed
 load("data/clean_pathogen.rda")
 
@@ -89,6 +89,13 @@ get_sharing(data = genus_genus, path_to_save = "data/sharing/genus.sharing.rda")
 get_sharing(data = species_species, path_to_save = "data/sharing/species.sharing.rda")
 get_sharing(data = genus_species, path_to_save = "data/sharing/genus.sp.sharing.rda")
 get_sharing(data = species_genus, path_to_save = "data/sharing/species.gen.sharing.rda")
+
+# Adjust the sharing
+load("data/sharing/species.gen.sharing.rda")
+sharing <- sharing %>%  as.data.frame() %>%
+  mutate(shared.org = as.numeric(shared)/as.numeric(org2.count))  %>% # create sharing index for org1
+  select(- shared.org1, -shared.org2)
+save(sharing, file = "data/sharing/species.gen.sharing.rda")
 ```
 
 ```{r Visualize WOS distribution}
@@ -316,7 +323,19 @@ ggsave("figures/JAC/species.gen.pdf",
        useDingbats = FALSE)
 ```
 
+```{r Join WOS, sharing, distance}
+load("data/clean_pathogen.rda")
 
+# Species species
+load("data/sharing/species.sharing.rda")
+load("data/phylo/species.dist.rda")
+species_species$org1 = species_species$host
+
+species_all <- full_join(distmat, species_species, by = "org1")
+species_all <- full_join(species_all, sharing, by = "org1")
+lm()
+
+```
 
 
 
