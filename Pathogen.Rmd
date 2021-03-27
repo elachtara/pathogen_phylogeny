@@ -340,8 +340,30 @@ sharing <- sharing %>%
 id <- match(species_all$ID, sharing$ID)
 species_all$shared.org <- sharing$shared.org[id]
 
+mylm <- lm(shared.org ~ WOS + distance, species_all)
+predicted <- mylm %>% predict(species_all)
 
+test <- as.data.frame(cbind(species_all$shared.org, predicted))
 
+p1 <- ggplot(test, aes(x = V1, y = predicted))+
+  geom_point()+
+  geom_smooth(method = "lm")+
+  theme_minimal()+
+  labs(x = "True shared", y = "Predicted shared")+
+  labs(title = "Shared.org ~ WOS + distance")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "none")
+
+ggsave("figures/LM/species.pdf",
+       plot = p1,
+       units = "in",
+       width = 6,
+       height = 5,
+       useDingbats = FALSE)
 
 ```
 
