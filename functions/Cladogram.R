@@ -1,5 +1,4 @@
 
-
 # Function to get Jaccard index
 get_cladogram <- function(data, filename){
   

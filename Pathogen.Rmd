@@ -340,12 +340,16 @@ sharing <- sharing %>%
 id <- match(species_all$ID, sharing$ID)
 species_all$shared.org <- sharing$shared.org[id]
 
+# Run regression
 mylm <- lm(shared.org ~ WOS + distance, species_all)
 predicted <- mylm %>% predict(species_all)
 
-test <- as.data.frame(cbind(species_all$shared.org, predicted))
+# Species Prediction
+spec_predict <- as.data.frame(cbind(species_all$shared.org, predicted))
 
-p1 <- ggplot(test, aes(x = V1, y = predicted))+
+
+save(spec_predict, mylm, species_all, file = "data/phylo/joined.species.rda")
+p1 <- ggplot(spec_predict, aes(x = V1, y = predicted))+
   geom_point()+
   geom_smooth(method = "lm")+
   theme_minimal()+

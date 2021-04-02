@@ -47,4 +47,9 @@ get_cladogram(data = phylo_dist, "data/phylo/species.dist.rda")
 colnames(distmat) <- c("org1", "org2", "distance")
 distmat <- as.data.frame(distmat)
 save(distmat, file = "data/phylo/species.dist.rda")
+
+
+# Run clado distances for genus
+load("data/phylo/joined_dist.rda")
+get_cladogram(data = phylo_dist, "data/phylo/species.dist.rda")
 ```
