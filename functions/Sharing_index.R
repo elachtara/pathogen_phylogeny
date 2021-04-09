@@ -51,6 +51,13 @@ for(org1 in hostnames){
   print(paste("only", left, "to go!", sep= " "))
 }
 
+  # Quick edit to sharing
+  sharing <- sharing %>%  
+    as.data.frame() %>%
+    # create sharing index for org
+    mutate(shared.org = as.numeric(shared)/as.numeric(org2.count))  %>% 
+    select(-shared.org1, -shared.org2)
+  
   # Save data
   save(sharing, file = path_to_save)
   
