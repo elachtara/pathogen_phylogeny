@@ -120,15 +120,15 @@ justnames <- species_species %>%
   mutate(gspec = paste(genus, species, sep = " "))
 
 # join into cladogram
-phylo_dist <- full_join(justnames, cladogram, by = "genus")  %>%  na.omit() %>% distinct()
+phylo_dist <- full_join(justnames, cladogram, by = "genus") %>% 
+  na.omit() %>% distinct()
 save(phylo_dist, file = "data/phylo/joined_dist.rda")
 
 # Run clado distances for species
 load("data/phylo/joined_dist.rda")
-get_cladogram(data = phylo_dist, "data/phylo/species.dist.rda")
-colnames(distmat) <- c("org1", "org2", "distance")
-distmat <- as.data.frame(distmat)
-save(distmat, file = "data/phylo/species.dist.rda")
+get_cladogram(data = phylo_dist, "data/phylo/species.dist.rda", "gpsec")
+get_cladogram(data = phylo_dist, filename = "data/phylo/genus.dist.rda", 
+              type = "genus")
 ```
 
 ```{r Create sharing index}

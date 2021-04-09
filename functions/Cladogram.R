@@ -1,9 +1,13 @@
 
 # Function to get Jaccard index
-get_cladogram <- function(data, filename){
+get_cladogram <- function(data, filename, type){
   
   # Initiate for storage
-  species <- unique(data$gspec)
+  if(type == "gspec"){ # if we are looking at species
+  species <- unique(data$gspec)}
+  
+  species <- unique(data$genus) 
+  
   distmat <- matrix(NA, nrow = 0, ncol = 3)
   colnames(distmat) <- c('gspec1', 'gpsec2', 'distance')
   
@@ -13,7 +17,10 @@ get_cladogram <- function(data, filename){
     # Pull the other organisms to compare
     others <- species[-1]
 
+    if(type == "gspec"){
     org1 <- data %>% filter(gspec == gspec1)
+    }
+    org1 <- data %>% filter(genus == gspec1)
     
     # Loop through the other organisms
     for(gspec2 in others){
@@ -22,7 +29,11 @@ get_cladogram <- function(data, filename){
       tmp.arr <- c(rep(0, 4))
       
       # pull data for pairwise comparison
+      if(type == "gspec"){
       org2 <- data %>% filter(gspec == gspec2)
+      }
+      org2 <- data %>% filter(genus == gspec2)
+      
       
       # how closely related?
       if(org1$genus == org2$genus){ 
@@ -56,6 +67,10 @@ get_cladogram <- function(data, filename){
     
     print(paste("only", left, "to go!", sep= " "))
   }
+  
+  # Just some name things
+  colnames(distmat) <- c("org1", "org2", "distance")
+  distmat <- as.data.frame(distmat)
   
   # Save data
   save(distmat, file = filename)
