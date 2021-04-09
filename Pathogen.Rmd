@@ -259,7 +259,9 @@ ggsave("figures/JAC/species.gen.pdf",
        useDingbats = FALSE)
 ```
 
-```{r Regression Species}
+## Species Analysis
+
+```{r Proportion vs WOS + Distance}
 load("data/phylo/joined.species.rda")
 
 # Run regression
@@ -286,5 +288,32 @@ ggplot(spec_predict, aes(x = V1, y = predicted))+
 
 ```
 
+```{r Proportion vs. Distance}
+# Plot proportion.org vs distance
+load("data/phylo/joined.species.rda")
+
+# Run regression
+mylm2 <- lm(shared.org ~ distance, species_all)
+predicted2 <- mylm2 %>% predict(species_all)
+
+# Species Prediction
+spec_predict2 <- as.data.frame(cbind(species_all$shared.org, predicted2))
+
+summary(mylm2)
+
+ggplot(spec_predict2, aes(x = V1, y = predicted2))+
+  geom_point()+
+  geom_smooth(method = "lm")+
+  theme_minimal()+
+  labs(x = "True shared", y = "Predicted shared")+
+  labs(title = "Shared.org ~ WOS + distance")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "none")
+
+```
 
 
