@@ -1,0 +1,156 @@
+---
+title: "Data Wrangle"
+author: "Emily M. Lachtara"
+date: "4/9/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Load required packages
+library(readxl)
+library(janitor)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(kableExtra)
+library(readxl)
+library(readr)
+source('functions/Sharing_index.R')
+```
+
+```{r Data read in}
+# Read in Data, join all three families
+fam1 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet1") %>% clean_names() 
+fam2 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet2") %>% clean_names()
+fam3 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet3") %>% clean_names() 
+all_fams <- rbind(fam1, fam2, fam3)
+rm(fam1, fam2, fam3)
+```
+
+
+```{r Synonymy Correction, Target Removal}
+# Read in keys, replace raw name with new name
+# Plants name correction
+plants_key <- read_excel("data/key.xlsx", sheet = "plants")
+id <- match(all_fams$host, plants_key$raw_name)
+all_fams$host <- plants_key$new_name[id]
+rm(id)
+
+# Pathogen name correction
+fungi_key <- read_excel("data/key.xlsx", sheet = "fungi")
+id <- match(all_fams$sci_name, fungi_key$raw_name)
+all_fams$sci_name <- fungi_key$new_name[id]
+rm(id)
+
+# Remove duplicate and NA entries
+clean_pathogen <- all_fams %>% select(sci_name, host) %>% distinct() %>% na.omit()
+```
+
+```{r Target removal}
+# Define a function to help us later
+`%notin%` <- Negate(`%in%`)
+
+#remove these two pathogens
+clean_pathogen <- clean_pathogen %>% 
+  filter(sci_name %notin% c('Desmidophorus concentricus', 
+                            'Pseudomonas tumefaciens'))
+
+# remove these species
+clean_pathogen <- clean_pathogen %>% 
+  filter(host %notin% c('Amaranthaceae', 
+                        'Caryophyllaceae',
+                        'Polygonaceae',
+                        'Rajania cordata',
+                        'Rajania hastata',
+                        'Rajania ovata',
+                        'Centunculus minimus',
+                        'Drymaria quercifolia',
+                        'Rosea sp.',
+                        'Tovara japonica',
+                        'Trommsdorffia maculata'))
+```
+
+```{r Split up into taxonomy levels}
+# Genus host, genus pathogen
+genus_genus <- clean_pathogen %>% separate(host, c('host', 'species') , sep = " ") %>% separate(sci_name, c('sci_name', 'species2') , sep = " ") %>%
+  select(-species, -species2) %>% distinct
+
+# Genus host, species pathogen
+genus_species <- clean_pathogen %>% separate(host, c('host', 'species') , sep = " ") %>% filter(!grepl('sp.', sci_name)) %>% select(-species) %>% distinct()
+
+# Species host, species pathogen
+species_species <- clean_pathogen %>% filter(!grepl('sp.', host)) %>% filter(!grepl('sp.', sci_name))%>% distinct()
+
+# Species host, genus pathogen
+species_genus <- clean_pathogen %>% filter(!grepl('sp.', host)) %>% filter(!grepl('sp.', sci_name)) %>% separate(sci_name, c('sci_name', 'species2') , sep = " ") %>%
+  select(-species2) %>%  distinct()
+```
+
+```{r Split up}
+# Read in WOS
+WOS_citations <- read_csv("data/WOS/WOS citations - Sheet1.csv")
+WOS_species <- WOS_citations %>% rename(host = Host) %>% select(host, WOS)
+WOS_genus <- WOS_citations %>% separate(Host, c('host', 'species2') , sep = " ") %>% 
+  group_by(host) %>% 
+  summarize(WOS = sum(WOS)) # sum of WOS
+
+# Join WOS with other
+species_species <- full_join(species_species, WOS_species, by = "host")
+species_genus <- full_join(species_genus, WOS_species, by = "host")
+genus_species <- full_join(genus_species, WOS_genus, by = "host")
+genus_genus <- full_join(genus_genus, WOS_genus, by = "host")
+
+# Save the cleaned/corrected data
+save(genus_genus, genus_species, species_species, species_genus, file = "data/clean_pathogen.rda")
+
+```
+
+```{r Cladogram }
+# Read in Data
+cladogram <- read_excel("data/phylo/cladogram.xlsx", sheet = "Sheet1") %>% clean_names() %>% select(-notes) %>% na.omit()
+
+# Load in clean data if needed
+load("data/clean_pathogen.rda")
+# split up into species genus
+justnames <- species_species %>% 
+  separate(host, c('genus', 'species') , sep = " ") %>%
+  select(genus, species) %>%
+  mutate(gspec = paste(genus, species, sep = " "))
+
+# join into cladogram
+phylo_dist <- full_join(justnames, cladogram, by = "genus")  %>%  na.omit() %>% distinct()
+save(phylo_dist, file = "data/phylo/joined_dist.rda")
+
+# Run clado distances for species
+load("data/phylo/joined_dist.rda")
+get_cladogram(data = phylo_dist, "data/phylo/species.dist.rda")
+
+colnames(distmat) <- c("org1", "org2", "distance")
+distmat <- as.data.frame(distmat)
+save(distmat, file = "data/phylo/species.dist.rda")
+```
+
+
+```{r Join WOS, sharing, distance}
+load("data/clean_pathogen.rda")
+
+# Species species
+load("data/sharing/species.sharing.rda")
+load("data/phylo/species.dist.rda")
+species_species$org1 = species_species$host
+species_all <- full_join(distmat, species_species, by = "org1")
+species_all <- species_all %>% select(-host, -sci_name) %>%
+  distinct() %>%
+  mutate(distance = as.numeric(distance)) %>%
+  mutate(ID = paste(org1, org2, sep = "_"))
+sharing <- sharing %>%
+  mutate(ID = paste(org1, org2, sep = "_"))
+id <- match(species_all$ID, sharing$ID)
+species_all$shared.org <- sharing$shared.org[id]
+save(species_all, file = "data/phylo/joined.species.rda")
+
+```
+
+

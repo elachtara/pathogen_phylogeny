@@ -26,7 +26,7 @@ mypal <- cbind(palette(RColorBrewer::brewer.pal(n = 8, name = "Set2")),
 
 ```{r Data wrangle}
 # Read in Data
-cladogram <- read_excel("data/phylo/cladogram.xlsx", sheet = "Sheet1") %>% clean_names() %>% select(-notes)
+cladogram <- read_excel("data/phylo/cladogram.xlsx", sheet = "Sheet1") %>% clean_names() %>% select(-notes) %>% na.omit()
 
 # Load in clean data if needed
 load("data/clean_pathogen.rda")
@@ -36,7 +36,7 @@ justnames <- species_species %>%
   select(genus, species) %>%
   mutate(gspec = paste(genus, species, sep = " "))
 
-# join into cladogram9
+# join into cladogram
 phylo_dist <- full_join(justnames, cladogram, by = "genus")  %>%  na.omit() %>% distinct()
 save(phylo_dist, file = "data/phylo/joined_dist.rda")
 
@@ -48,8 +48,15 @@ colnames(distmat) <- c("org1", "org2", "distance")
 distmat <- as.data.frame(distmat)
 save(distmat, file = "data/phylo/species.dist.rda")
 
+# Plot proportion.org vs distance
 
-# Run clado distances for genus
+
+
+# TO DO!!!
+# Run clado distances for genus - need to recode the function to start at the genera level
 load("data/phylo/joined_dist.rda")
 get_cladogram(data = phylo_dist, "data/phylo/species.dist.rda")
 ```
+
+
+

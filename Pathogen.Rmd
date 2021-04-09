@@ -23,63 +23,6 @@ mypal <- cbind(palette(RColorBrewer::brewer.pal(n = 8, name = "Set2")),
                palette(RColorBrewer::brewer.pal(n = 12, name = "Paired")))
 ```
 
-```{r Data wrangle}
-# Read in Data
-fam1 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet1") %>% clean_names() 
-fam2 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet2") %>% clean_names()
-fam3 <- read_excel("data/m_hood_fams.xlsx", sheet = "Sheet3") %>% clean_names() 
-all_fams <- rbind(fam1, fam2, fam3)
-
-all_order <- unique(all_fams$hostfam)
-
-# Synonymy Correction
-# Read in keys, replace raw name with new name
-# Plants name correction
-plants_key <- read_excel("data/key.xlsx", sheet = "plants")
-id <- match(all_fams$host, plants_key$raw_name)
-all_fams$host <- plants_key$new_name[id]
-rm(id)
-
-# Pathogen name correction
-fungi_key <- read_excel("data/key.xlsx", sheet = "fungi")
-id <- match(all_fams$sci_name, fungi_key$raw_name)
-all_fams$sci_name <- fungi_key$new_name[id]
-rm(id)
-
-# Remove duplicate entries
-clean_pathogen <- all_fams %>% select(sci_name, host) %>% distinct()
-
-# Genus host, genus pathogen
-genus_genus <- clean_pathogen %>% separate(host, c('host', 'species') , sep = " ") %>% separate(sci_name, c('sci_name', 'species2') , sep = " ") %>%
-  select(-species, -species2) %>% distinct
-
-# Genus host, species pathogen
-genus_species <- clean_pathogen %>% separate(host, c('host', 'species') , sep = " ") %>% filter(!grepl('sp.', sci_name)) %>% select(-species) %>% distinct()
-
-# Species host, species pathogen
-species_species <- clean_pathogen %>% filter(!grepl('sp.', host)) %>% filter(!grepl('sp.', sci_name))%>% distinct()
-
-# Species host, genus pathogen
-species_genus <- clean_pathogen %>% filter(!grepl('sp.', host)) %>% filter(!grepl('sp.', sci_name)) %>% separate(sci_name, c('sci_name', 'species2') , sep = " ") %>%
-  select(-species2) %>%  distinct()
-
-# Read in WOS
-WOS_citations <- read_csv("data/WOS/WOS citations - Sheet1.csv")
-WOS_species <- WOS_citations %>% rename(host = Host) %>% select(host, WOS)
-WOS_genus <- WOS_citations %>% separate(Host, c('host', 'species2') , sep = " ") %>% 
-  group_by(host) %>% 
-  summarize(WOS = sum(WOS)) # sum of WOS
-
-# Join WOS with other
-species_species <- full_join(species_species, WOS_species, by = "host")
-species_genus <- full_join(species_genus, WOS_species, by = "host")
-genus_species <- full_join(genus_species, WOS_genus, by = "host")
-genus_genus <- full_join(genus_genus, WOS_genus, by = "host")
-
-# Save the cleaned/corrected data
-save(genus_genus, genus_species, species_species, species_genus, file = "data/clean_pathogen.rda")
-```
-
 ```{r Create sharing index}
 # Load in clean data if needed
 load("data/clean_pathogen.rda")
@@ -89,13 +32,6 @@ get_sharing(data = genus_genus, path_to_save = "data/sharing/genus.sharing.rda")
 get_sharing(data = species_species, path_to_save = "data/sharing/species.sharing.rda")
 get_sharing(data = genus_species, path_to_save = "data/sharing/genus.sp.sharing.rda")
 get_sharing(data = species_genus, path_to_save = "data/sharing/species.gen.sharing.rda")
-
-# Adjust the sharing
-load("data/sharing/species.gen.sharing.rda")
-sharing <- sharing %>%  as.data.frame() %>%
-  mutate(shared.org = as.numeric(shared)/as.numeric(org2.count))  %>% # create sharing index for org1
-  select(- shared.org1, -shared.org2)
-save(sharing, file = "data/sharing/species.gen.sharing.rda")
 ```
 
 ```{r Visualize WOS distribution}
@@ -323,22 +259,8 @@ ggsave("figures/JAC/species.gen.pdf",
        useDingbats = FALSE)
 ```
 
-```{r Join WOS, sharing, distance}
-load("data/clean_pathogen.rda")
-
-# Species species
-load("data/sharing/species.sharing.rda")
-load("data/phylo/species.dist.rda")
-species_species$org1 = species_species$host
-species_all <- full_join(distmat, species_species, by = "org1")
-species_all <- species_all %>% select(-host, -sci_name) %>%
-  distinct() %>%
-  mutate(distance = as.numeric(distance)) %>%
-  mutate(ID = paste(org1, org2, sep = "_"))
-sharing <- sharing %>%
-  mutate(ID = paste(org1, org2, sep = "_"))
-id <- match(species_all$ID, sharing$ID)
-species_all$shared.org <- sharing$shared.org[id]
+```{r Regression Species}
+load("data/phylo/joined.species.rda")
 
 # Run regression
 mylm <- lm(shared.org ~ WOS + distance, species_all)
@@ -347,9 +269,9 @@ predicted <- mylm %>% predict(species_all)
 # Species Prediction
 spec_predict <- as.data.frame(cbind(species_all$shared.org, predicted))
 
+summary(mylm)
 
-save(spec_predict, mylm, species_all, file = "data/phylo/joined.species.rda")
-p1 <- ggplot(spec_predict, aes(x = V1, y = predicted))+
+ggplot(spec_predict, aes(x = V1, y = predicted))+
   geom_point()+
   geom_smooth(method = "lm")+
   theme_minimal()+
@@ -361,13 +283,6 @@ p1 <- ggplot(spec_predict, aes(x = V1, y = predicted))+
         axis.text.x = element_text(size = 10),
         axis.text.y = element_text(size = 10),
         legend.position = "none")
-
-ggsave("figures/LM/species.pdf",
-       plot = p1,
-       units = "in",
-       width = 6,
-       height = 5,
-       useDingbats = FALSE)
 
 ```
 
