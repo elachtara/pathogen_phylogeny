@@ -23,16 +23,7 @@ mypal <- cbind(palette(RColorBrewer::brewer.pal(n = 8, name = "Set2")),
                palette(RColorBrewer::brewer.pal(n = 12, name = "Paired")))
 ```
 
-```{r Create sharing index}
-# Load in clean data if needed
-load("data/clean_pathogen.rda")
 
-# Get pathogen sharing index
-get_sharing(data = genus_genus, path_to_save = "data/sharing/genus.sharing.rda")
-get_sharing(data = species_species, path_to_save = "data/sharing/species.sharing.rda")
-get_sharing(data = genus_species, path_to_save = "data/sharing/genus.sp.sharing.rda")
-get_sharing(data = species_genus, path_to_save = "data/sharing/species.gen.sharing.rda")
-```
 
 ```{r Visualize WOS distribution}
 # Load pathogen data
@@ -306,7 +297,7 @@ ggplot(spec_predict2, aes(x = V1, y = predicted2))+
   geom_smooth(method = "lm")+
   theme_minimal()+
   labs(x = "True shared", y = "Predicted shared")+
-  labs(title = "Shared.org ~ WOS + distance")+
+  labs(title = "Shared.org ~ Distance")+
   theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
         axis.title.y = element_text(size = 12, face = "bold"),
         axis.title.x = element_text(size = 12, face = "bold"),

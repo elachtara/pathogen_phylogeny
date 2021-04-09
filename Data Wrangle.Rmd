@@ -107,7 +107,7 @@ save(genus_genus, genus_species, species_species, species_genus, file = "data/cl
 
 ```
 
-```{r Cladogram }
+```{r Cladogram}
 # Read in Data
 cladogram <- read_excel("data/phylo/cladogram.xlsx", sheet = "Sheet1") %>% clean_names() %>% select(-notes) %>% na.omit()
 
@@ -126,13 +126,23 @@ save(phylo_dist, file = "data/phylo/joined_dist.rda")
 # Run clado distances for species
 load("data/phylo/joined_dist.rda")
 get_cladogram(data = phylo_dist, "data/phylo/species.dist.rda")
-
 colnames(distmat) <- c("org1", "org2", "distance")
 distmat <- as.data.frame(distmat)
 save(distmat, file = "data/phylo/species.dist.rda")
 ```
 
-```{r Join WOS, sharing, distance}
+```{r Create sharing index}
+# Load in clean data if needed
+load("data/clean_pathogen.rda")
+
+# Get pathogen sharing index
+get_sharing(data = genus_genus, path_to_save = "data/sharing/genus.sharing.rda")
+get_sharing(data = species_species, path_to_save = "data/sharing/species.sharing.rda")
+get_sharing(data = genus_species, path_to_save = "data/sharing/genus.sp.sharing.rda")
+get_sharing(data = species_genus, path_to_save = "data/sharing/species.gen.sharing.rda")
+```
+
+```{r Join all Species}
 load("data/clean_pathogen.rda")
 
 # Species species
