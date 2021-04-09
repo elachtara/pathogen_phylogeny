@@ -132,7 +132,6 @@ distmat <- as.data.frame(distmat)
 save(distmat, file = "data/phylo/species.dist.rda")
 ```
 
-
 ```{r Join WOS, sharing, distance}
 load("data/clean_pathogen.rda")
 
