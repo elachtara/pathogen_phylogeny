@@ -126,9 +126,8 @@ save(phylo_dist, file = "data/phylo/joined_dist.rda")
 
 # Run clado distances for species
 load("data/phylo/joined_dist.rda")
-get_cladogram(data = phylo_dist, "data/phylo/species.dist.rda", "gpsec")
-get_cladogram(data = phylo_dist, filename = "data/phylo/genus.dist.rda", 
-              type = "genus")
+get_cladogram(data = phylo_dist, filename = "data/phylo/species.dist.rda", type = "gpsec")
+get_cladogram(data = phylo_dist, filename = "data/phylo/genus.dist.rda", type = "genus")
 ```
 
 ```{r Create sharing index}
@@ -143,23 +142,51 @@ get_sharing(data = species_genus, path_to_save = "data/sharing/species.gen.shari
 ```
 
 ```{r Join all Species}
+# Load in necessary files
 load("data/clean_pathogen.rda")
-
-# Species species
 load("data/sharing/species.sharing.rda")
 load("data/phylo/species.dist.rda")
-species_species$org1 = species_species$host
+
+# name conversion for later
+species_species$org1 <- species_species$host
+
+# join distance to WOS, remove sci for later, create unique ID
 species_all <- full_join(distmat, species_species, by = "org1")
 species_all <- species_all %>% select(-host, -sci_name) %>%
   distinct() %>%
   mutate(distance = as.numeric(distance)) %>%
   mutate(ID = paste(org1, org2, sep = "_"))
+
+# create unique ID in sharing file so we can join with rest of data
 sharing <- sharing %>%
   mutate(ID = paste(org1, org2, sep = "_"))
 id <- match(species_all$ID, sharing$ID)
 species_all$shared.org <- sharing$shared.org[id]
-save(species_all, file = "data/phylo/joined.species.rda")
+save(species_all, file = "data/final.species.rda")
+```
 
+```{r Join all Genus}
+# Load in necessary files
+load("data/clean_pathogen.rda")
+load("data/sharing/genus.sharing.rda")
+load("data/phylo/genus.dist.rda")
+
+# name conversion for later
+genus_genus$org1  <- genus_genus$host
+
+# join distance to WOS, remove sci for later, create unique ID
+genus_all <- full_join(distmat, genus_genus, by = "org1")
+genus_all <- genus_all %>% select(-host, -sci_name) %>%
+  distinct() %>%
+  mutate(distance = as.numeric(distance)) %>%
+  mutate(ID = paste(org1, org2, sep = "_"))
+
+# create unique ID in sharing file so we can join with rest of data
+sharing <- sharing %>%
+  mutate(ID = paste(org1, org2, sep = "_"))
+id <- match(genus_all$ID, sharing$ID)
+genus_all$shared.org <- sharing$shared.org[id]
+save(genus_all, file = "data/final.genus.rda")
 ```
 
 
