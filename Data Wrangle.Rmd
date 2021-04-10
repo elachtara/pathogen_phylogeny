@@ -162,6 +162,9 @@ sharing <- sharing %>%
   mutate(ID = paste(org1, org2, sep = "_"))
 id <- match(species_all$ID, sharing$ID)
 species_all$shared.org <- sharing$shared.org[id]
+
+# remove any NA's ( we dont have many)
+species_all <- na.omit(species_all)
 save(species_all, file = "data/final.species.rda")
 ```
 
@@ -186,6 +189,9 @@ sharing <- sharing %>%
   mutate(ID = paste(org1, org2, sep = "_"))
 id <- match(genus_all$ID, sharing$ID)
 genus_all$shared.org <- sharing$shared.org[id]
+
+# remove any NA's ( we dont have many)
+genus_all <- na.omit(genus_all)
 save(genus_all, file = "data/final.genus.rda")
 ```
 

@@ -8,26 +8,21 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 
 # Load required packages
-library(readxl)
-library(janitor)
 library(dplyr)
 library(ggplot2)
-library(tidyr)
-library(kableExtra)
-library(readxl)
-library(readr)
-source('functions/Sharing_index.R')
+library(RColorBrewer)
 
 # Define color pallette
-mypal <- cbind(palette(RColorBrewer::brewer.pal(n = 8, name = "Set2")),
-               palette(RColorBrewer::brewer.pal(n = 12, name = "Paired")))
+mypal <- cbind(palette(brewer.pal(n = 8, name = "Set2")),
+               palette(brewer.pal(n = 12, name = "Paired")))
+
+# Load in data
+load("data/final.genus.rda")
+load("data/final.species.rda")
+load("data/raw/clean_pathogen.rda")
 ```
 
-
 ```{r Visualize WOS distribution}
-# Load pathogen data
-load("data/clean_pathogen.rda")
-
 # Genus WOS plot
 p1 <- genus_genus %>%
   select(host, WOS) %>%
@@ -75,16 +70,13 @@ ggsave("figures/WOS/species.pdf",
 ```
 
 ```{r Visualize log(WOS) vs log(PSR)}
-# Load pathogen data
-load("data/clean_pathogen.rda")
-
 # Species plot
 p1 <- species_species %>% 
   group_by(host) %>% 
   summarize(PSR = n(), WOS = WOS) %>%
   ggplot(aes(x = log(WOS), y = log(PSR))) +
   geom_point(col = mypal[9], size = 1)+
-  geom_smooth(method = "lm", se = FALSE, size = 0.3, col = mypal[9])+
+  geom_smooth(method = "lm", se = FALSE, size = 0.3, col = mypal[3])+
   theme_minimal()+
   labs(y = "log(PSR)", x = "log(WOS Citations)")+
   labs(title = "WOS Citations vs PSR by species")+
@@ -109,7 +101,7 @@ p2 <- genus_genus %>%
   summarize(PSR = n(), WOS = WOS) %>%
   ggplot(aes(x = log(WOS), y = log(PSR))) +
   geom_point(col = mypal[15], size = 1)+
-  geom_smooth(method = "lm", se = FALSE, size = 0.3, col = mypal[15])+
+  geom_smooth(method = "lm", se = FALSE, size = 0.3, col = mypal[4])+
   theme_minimal()+
   labs(y = "log(PSR)", x = "log(WOS Citations)")+
   labs(title = "WOS Citations vs PSR by genus")+
@@ -157,12 +149,9 @@ ggsave("figures/PSR/both.pdf",
 
 ```{r Visualize pathogen sharing}
 # Genus host, genus pathogen
-load("data/sharing/genus.sharing.rda")
-p1 <- as.data.frame(sharing) %>%
-  mutate(percent = as.numeric(shared)/(as.numeric(org1.count) + as.numeric(org2.count))) %>%
-  filter(percent > 0) %>% 
-  ggplot(aes(x = percent))+
-  geom_density(fill = mypal[8])+
+p1 <- genus_all %>%
+  ggplot(aes(x = shared.org))+
+  geom_density(fill = mypal[5])+
   theme_minimal()+
   labs(y = "Count", x = "Jaccard Index")+
   labs(title = "Host pathogen sharing (Genus-Genus)")+
@@ -172,43 +161,17 @@ p1 <- as.data.frame(sharing) %>%
         axis.text.x = element_text(size = 10),
         axis.text.y = element_text(size = 10),
         legend.position = "none")
-ggsave("figures/JAC/genus.genus.pdf",
+ggsave("figures/JAC/genus.pdf",
        plot = p1,
        units = "in",
        width = 6,
        height = 5,
        useDingbats = FALSE)
 
-# Genus host, species pathogen
-load("data/sharing/genus.sp.sharing.rda")
-p2 <- as.data.frame(sharing) %>%
-  mutate(percent = as.numeric(shared)/(as.numeric(org1.count) + as.numeric(org2.count))) %>%
-  filter(percent > 0) %>% 
-  ggplot(aes(x = percent))+
-  geom_density(fill = mypal[4])+
-  theme_minimal()+
-  labs(y = "Count", x = "Jaccard Index")+
-  labs(title = "Host pathogen sharing (Genus-Species)")+
-  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-        axis.title.y = element_text(size = 12, face = "bold"),
-        axis.title.x = element_text(size = 12, face = "bold"),
-        axis.text.x = element_text(size = 10),
-        axis.text.y = element_text(size = 10),
-        legend.position = "none")
-ggsave("figures/JAC/genus.sp.pdf",
-       plot = p2,
-       units = "in",
-       width = 6,
-       height = 5,
-       useDingbats = FALSE)
-
 # Species host, species pathogen
-load("data/sharing/species.sharing.rda")
-p3 <- as.data.frame(sharing) %>%
-  mutate(percent = as.numeric(shared)/(as.numeric(org1.count) + as.numeric(org2.count))) %>%
-  filter(percent > 0) %>% 
-  ggplot(aes(x = percent))+
-  geom_density(fill = mypal[2])+
+p2 <- species_all %>%
+  ggplot(aes(x = shared.org))+
+  geom_density(fill = mypal[5])+
   theme_minimal()+
   labs(y = "Count", x = "Jaccard Index")+
   labs(title = "Host pathogen sharing (Species-Species)")+
@@ -219,41 +182,16 @@ p3 <- as.data.frame(sharing) %>%
         axis.text.y = element_text(size = 10),
         legend.position = "none")
 ggsave("figures/JAC/species.pdf",
-       plot = p3,
+       plot = p2,
        units = "in",
        width = 6,
        height = 5,
        useDingbats = FALSE)
 
-# Species host, genus pathogen
-load("data/sharing/species.gen.sharing.rda")
-p4 <- as.data.frame(sharing) %>%
-  mutate(percent = as.numeric(shared)/(as.numeric(org1.count) + as.numeric(org2.count))) %>%
-  filter(percent > 0) %>% 
-  ggplot(aes(x = percent))+
-  geom_density(fill = mypal[1])+
-  theme_minimal()+
-  labs(y = "Count", x = "Jaccard Index")+
-  labs(title = "Host pathogen sharing (Species-Genus)")+
-  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-        axis.title.y = element_text(size = 12, face = "bold"),
-        axis.title.x = element_text(size = 12, face = "bold"),
-        axis.text.x = element_text(size = 10),
-        axis.text.y = element_text(size = 10),
-        legend.position = "none")
-ggsave("figures/JAC/species.gen.pdf",
-       plot = p4,
-       units = "in",
-       width = 6,
-       height = 5,
-       useDingbats = FALSE)
 ```
 
-## Species Analysis
 
 ```{r Proportion vs WOS + Distance}
-load("data/phylo/joined.species.rda")
-
 # Run regression
 mylm <- lm(shared.org ~ WOS + distance, species_all)
 predicted <- mylm %>% predict(species_all)
