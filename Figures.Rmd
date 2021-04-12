@@ -77,11 +77,11 @@ p1 <- species_species %>%
   group_by(host) %>% 
   summarize(PSR = n(), WOS = WOS) %>%
   ggplot(aes(x = log(WOS), y = log(PSR))) +
-  geom_point(col = mypal[4], size = 1)+
+  geom_point(col = mypal[4], size = 3)+
   geom_smooth(method = "lm", se = FALSE, size = 0.3, col = mypal[1])+
   theme_minimal()+
   labs(y = "log(PSR)", x = "log(WOS Citations)")+
-  labs(title = "WOS Citations vs PSR by species")+
+  labs(title = "WOS Citations vs PSR (Species)")+
   theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
         axis.title.y = element_text(size = 12, face = "bold"),
         axis.title.x = element_text(size = 12, face = "bold"),
@@ -102,11 +102,11 @@ p2 <- genus_genus %>%
   group_by(host) %>% 
   summarize(PSR = n(), WOS = WOS) %>%
   ggplot(aes(x = log(WOS), y = log(PSR))) +
-  geom_point(col = mypal[3], size = 1)+
+  geom_point(col = mypal[3], size = 3)+
   geom_smooth(method = "lm", se = FALSE, size = 0.3, col = mypal[1])+
   theme_minimal()+
   labs(y = "log(PSR)", x = "log(WOS Citations)")+
-  labs(title = "WOS Citations vs PSR by genus")+
+  labs(title = "WOS Citations vs PSR (Genus)")+
   theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
         axis.title.y = element_text(size = 12, face = "bold"),
         axis.title.x = element_text(size = 12, face = "bold"),
@@ -128,12 +128,12 @@ p3 <- rbind(species_species, genus_genus) %>%
   group_by(host) %>% 
   summarize(PSR = n(), WOS = WOS, group = group) %>%
   ggplot(aes(x = log(WOS), y = log(PSR), col = group)) +
-  geom_point(size = 1)+
+  geom_point(size = 3)+
   scale_colour_manual(values = mypal[3:4])+
   geom_smooth(method = "lm", se = FALSE, size = 0.3, col = mypal[2])+
   theme_minimal()+
   labs(y = "log(PSR)", x = "log(WOS Citations)", col = "taxonomy level")+
-  labs(title = "WOS Citations vs PSR by genus")+
+  labs(title = "WOS Citations vs PSR")+
   theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
         axis.title.y = element_text(size = 12, face = "bold"),
         axis.title.x = element_text(size = 12, face = "bold"),
@@ -152,10 +152,11 @@ ggsave("figures/PSR/both.pdf",
 ```{r Visualize pathogen sharing}
 # Genus host, genus pathogen
 p1 <- genus_all %>%
+  filter(shared.org > 0) %>%
   ggplot(aes(x = shared.org))+
   geom_density(fill = mypal[5])+
   theme_minimal()+
-  labs(y = "Count", x = "Jaccard Index")+
+  labs(y = "Count", x = "Proportion Shared")+
   labs(title = "Host pathogen sharing (Genus-Genus)")+
   theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
         axis.title.y = element_text(size = 12, face = "bold"),
@@ -172,10 +173,11 @@ ggsave("figures/JAC/genus.pdf",
 
 # Genus host, species pathogen
 p1a <- genus_species_all %>%
+  filter(shared.org > 0) %>%
   ggplot(aes(x = shared.org))+
   geom_density(fill = mypal[7])+
   theme_minimal()+
-  labs(y = "Count", x = "Jaccard Index")+
+  labs(y = "Count", x = "Proportion Shared")+
   labs(title = "Host pathogen sharing (Genus-Species)")+
   theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
         axis.title.y = element_text(size = 12, face = "bold"),
@@ -192,10 +194,11 @@ ggsave("figures/JAC/genus.sp.pdf",
 
 # Species host, species pathogen
 p2 <- species_all %>%
+  filter(shared.org > 0) %>%
   ggplot(aes(x = shared.org))+
   geom_density(fill = mypal[9])+
   theme_minimal()+
-  labs(y = "Count", x = "Jaccard Index")+
+  labs(y = "Count", x = "Proportion Shared")+
   labs(title = "Host pathogen sharing (Species-Species)")+
   theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
         axis.title.y = element_text(size = 12, face = "bold"),
@@ -212,10 +215,11 @@ ggsave("figures/JAC/species.pdf",
 
 # Species host, genus pathogen
 p2a <- species_genus_all %>%
+  filter(shared.org > 0) %>%
   ggplot(aes(x = shared.org))+
   geom_density(fill = mypal[2])+
   theme_minimal()+
-  labs(y = "Count", x = "Jaccard Index")+
+  labs(y = "Count", x = "Proportion Shared")+
   labs(title = "Host pathogen sharing (Species-Genus)")+
   theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
         axis.title.y = element_text(size = 12, face = "bold"),
@@ -256,25 +260,17 @@ ggplot(spec_predict, aes(x = V1, y = predicted))+
 
 ```
 
-```{r Proportion vs. Distance}
-# Plot proportion.org vs distance
-load("data/phylo/joined.species.rda")
-
-# Run regression
-mylm2 <- lm(shared.org ~ distance, species_all)
-predicted2 <- mylm2 %>% predict(species_all)
-
-# Species Prediction
-spec_predict2 <- as.data.frame(cbind(species_all$shared.org, predicted2))
-
-summary(mylm2)
-
-ggplot(spec_predict2, aes(x = V1, y = predicted2))+
-  geom_point()+
-  geom_smooth(method = "lm")+
+```{r Proportion vs. Distance Boxplots}
+# Species plot
+sd <- sd(species_all$shared.org)
+p1 <- species_all %>% 
+  filter(shared.org > 0) %>%
+  ggplot(aes(x = as.factor(distance), y = shared.org)) +
+  geom_boxplot(aes(fill = as.factor(distance)))+
   theme_minimal()+
-  labs(x = "True shared", y = "Predicted shared")+
-  labs(title = "Shared.org ~ Distance")+
+  scale_fill_manual(values = mypal)+
+  labs(y = "Proportion Pathogens Shared", x = "Phylogenetic Distance")+
+  labs(title = "Pathogen sharing vs. Distance (Species-Species)")+
   theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
         axis.title.y = element_text(size = 12, face = "bold"),
         axis.title.x = element_text(size = 12, face = "bold"),
@@ -282,20 +278,23 @@ ggplot(spec_predict2, aes(x = V1, y = predicted2))+
         axis.text.y = element_text(size = 10),
         legend.position = "none")
 
+ggsave("figures/BOX/species.pdf",
+       plot = p1,
+       units = "in",
+       width = 6,
+       height = 6,
+       useDingbats = FALSE)
 
-# Visuals for distances
-species_all %>%
-  group_by(distance) %>%
-  summarize(mean_shared = mean(shared.org)) %>%
-  ggplot(aes(x = distance, y = mean_shared)) +
-  geom_col()
-
-ggplot(species_all[1:10000,], aes(x = distance, y = shared.org))+
-  geom_point()+
-  geom_smooth(method = "l")+
+# Species-genus plot
+sd <- sd(species_genus_all$shared.org)
+p1a <- species_genus_all %>% 
+  filter(shared.org > 0) %>%
+  ggplot(aes(x = as.factor(distance), y = shared.org)) +
+  geom_boxplot(aes(fill = as.factor(distance)))+
   theme_minimal()+
-  labs(x = "Distance", y = "Shared")+
-  labs(title = "Shared.org ~ Distance")+
+  scale_fill_manual(values = mypal)+
+  labs(y = "Proportion Pathogens Shared", x = "Phylogenetic Distance")+
+  labs(title = "Pathogen sharing vs. Distance (Species-Genus)")+
   theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
         axis.title.y = element_text(size = 12, face = "bold"),
         axis.title.x = element_text(size = 12, face = "bold"),
@@ -303,8 +302,176 @@ ggplot(species_all[1:10000,], aes(x = distance, y = shared.org))+
         axis.text.y = element_text(size = 10),
         legend.position = "none")
 
+ggsave("figures/BOX/species.gen.pdf",
+       plot = p1a,
+       units = "in",
+       width = 6,
+       height = 6,
+       useDingbats = FALSE)
 
-cor(species_all$distance, species_all$)
+# Genus plot
+sd <- sd(genus_all$shared.org)
+p2 <- genus_all %>% 
+  filter(shared.org > 0) %>%
+  ggplot(aes(x = as.factor(distance), y = shared.org)) +
+  geom_boxplot(aes(fill = as.factor(distance)))+
+  theme_minimal()+
+  scale_fill_manual(values = mypal)+
+  labs(y = "Proportion Pathogens Shared", x = "Phylogenetic Distance")+
+  labs(title = "Pathogen sharing vs. Distance (Genus-Genus)")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "none")
+
+ggsave("figures/BOX/genus.pdf",
+       plot = p2,
+       units = "in",
+       width = 6,
+       height = 6,
+       useDingbats = FALSE)
+
+# Genus-species plot
+sd <- sd(genus_species_all$shared.org)
+p2a <- genus_species_all %>% 
+  filter(shared.org > 0) %>%
+  ggplot(aes(x = as.factor(distance), y = shared.org)) +
+  geom_boxplot(aes(fill = as.factor(distance)))+
+  theme_minimal()+
+  scale_fill_manual(values = mypal)+
+  labs(y = "Proportion Pathogens Shared", x = "Phylogenetic Distance")+
+  labs(title = "Pathogen sharing vs. Distance (Genus-Species)")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "none")
+
+ggsave("figures/BOX/genus.sp.pdf",
+       plot = p2a,
+       units = "in",
+       width = 6,
+       height = 6,
+       useDingbats = FALSE)
 ```
 
+```{r Proportion vs. Distance Barplots}
+# Species plot
+p1 <- species_all %>% 
+  group_by(distance) %>%
+  summarize(mean.shared = mean(shared.org), sd = sd(shared.org)) %>% 
+  ggplot(aes(x = as.factor(distance), y = mean.shared, fill = as.factor(distance))) +
+  geom_bar(stat = "identity", color = "black", 
+           position = position_dodge()) +
+  geom_errorbar(aes(ymin = mean.shared-sd, 
+                    ymax = mean.shared+sd),
+                    width = 0.2,
+                    position = position_dodge(0.9))+
+  theme_minimal()+
+  scale_fill_manual(values = mypal)+
+  labs(y = "Proportion Pathogens Shared", x = "Phylogenetic Distance")+
+  labs(title = "Pathogen sharing vs. Distance (Species-Species)")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "none")
 
+ggsave("figures/BAR/species.pdf",
+       plot = p1,
+       units = "in",
+       width = 6,
+       height = 6,
+       useDingbats = FALSE)
+
+# Species-genus plot
+p1a <- species_genus_all %>% 
+  group_by(distance) %>%
+  summarize(mean.shared = mean(shared.org), sd = sd(shared.org)) %>% 
+  ggplot(aes(x = as.factor(distance), y = mean.shared, fill = as.factor(distance))) +
+  geom_bar(stat = "identity", color = "black", 
+           position = position_dodge()) +
+  geom_errorbar(aes(ymin = mean.shared-sd, 
+                    ymax = mean.shared+sd),
+                    width = 0.2,
+                    position = position_dodge(0.9))+
+  theme_minimal()+
+  scale_fill_manual(values = mypal)+
+  labs(y = "Proportion Pathogens Shared", x = "Phylogenetic Distance")+
+  labs(title = "Pathogen sharing vs. Distance (Species-Genus)")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "none")
+
+ggsave("figures/BAR/species.gen.pdf",
+       plot = p1a,
+       units = "in",
+       width = 6,
+       height = 6,
+       useDingbats = FALSE)
+
+# Genus plot
+p2 <- genus_all %>% 
+  group_by(distance) %>%
+  summarize(mean.shared = mean(shared.org), sd = sd(shared.org)) %>% 
+  ggplot(aes(x = as.factor(distance), y = mean.shared, fill = as.factor(distance))) +
+  geom_bar(stat = "identity", color = "black", 
+           position = position_dodge()) +
+  geom_errorbar(aes(ymin = mean.shared-sd, 
+                    ymax = mean.shared+sd),
+                    width = 0.2,
+                    position = position_dodge(0.9))+
+  theme_minimal()+
+  scale_fill_manual(values = mypal)+
+  labs(y = "Proportion Pathogens Shared", x = "Phylogenetic Distance")+
+  labs(title = "Pathogen sharing vs. Distance (Genus-Genus)")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "none")
+
+ggsave("figures/BAR/genus.pdf",
+       plot = p2,
+       units = "in",
+       width = 6,
+       height = 6,
+       useDingbats = FALSE)
+
+# Genus-speciesplot
+p2a <- genus_species_all %>% 
+  group_by(distance) %>%
+  summarize(mean.shared = mean(shared.org), sd = sd(shared.org)) %>% 
+  ggplot(aes(x = as.factor(distance), y = mean.shared, fill = as.factor(distance))) +
+  geom_bar(stat = "identity", color = "black", 
+           position = position_dodge()) +
+  geom_errorbar(aes(ymin = mean.shared-sd, 
+                    ymax = mean.shared+sd),
+                    width = 0.2,
+                    position = position_dodge(0.9))+
+  theme_minimal()+
+  scale_fill_manual(values = mypal)+
+  labs(y = "Proportion Pathogens Shared", x = "Phylogenetic Distance")+
+  labs(title = "Pathogen sharing vs. Distance (Genus-Species)")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "none")
+
+ggsave("figures/BAR/genus.sp.pdf",
+       plot = p2a,
+       units = "in",
+       width = 6,
+       height = 6,
+       useDingbats = FALSE)
+```
