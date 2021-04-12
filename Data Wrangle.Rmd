@@ -104,7 +104,6 @@ genus_genus <- full_join(genus_genus, WOS_genus, by = "host")
 
 # Save the cleaned/corrected data
 save(genus_genus, genus_species, species_species, species_genus, file = "data/raw/clean_pathogen.rda")
-
 ```
 
 ```{r Cladogram}
@@ -141,7 +140,7 @@ get_sharing(data = genus_species, path_to_save = "data/sharing/genus.sp.sharing.
 get_sharing(data = species_genus, path_to_save = "data/sharing/species.gen.sharing.rda")
 ```
 
-```{r Join all Species}
+```{r Join Species- Species}
 # Load in necessary files
 load("data/raw/clean_pathogen.rda")
 load("data/sharing/species.sharing.rda")
@@ -166,6 +165,33 @@ species_all$shared.org <- sharing$shared.org[id]
 # remove any NA's ( we dont have many)
 species_all <- na.omit(species_all)
 save(species_all, file = "data/final.species.rda")
+```
+
+```{r Join Species-Genera}
+# Load in necessary files
+load("data/raw/clean_pathogen.rda")
+load("data/sharing/species.gen.sharing.rda")
+load("data/phylo/species.dist.rda")
+
+# name conversion for later
+species_genus$org1 <- species_genus$host
+
+# join distance to WOS, remove sci for later, create unique ID
+species_genus_all <- full_join(distmat, species_genus, by = "org1")
+species_genus_all <- species_genus_all %>% select(-host, -sci_name) %>%
+  distinct() %>%
+  mutate(distance = as.numeric(distance)) %>%
+  mutate(ID = paste(org1, org2, sep = "_"))
+
+# create unique ID in sharing file so we can join with rest of data
+sharing <- sharing %>%
+  mutate(ID = paste(org1, org2, sep = "_"))
+id <- match(species_genus_all$ID, sharing$ID)
+species_genus_all$shared.org <- sharing$shared.org[id]
+
+# remove any NA's ( we dont have many)
+species_genus_all <- na.omit(species_genus_all)
+save(species_genus_all, file = "data/final.species.gen.rda")
 ```
 
 ```{r Join all Genus}
