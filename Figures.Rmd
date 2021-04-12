@@ -19,6 +19,8 @@ mypal <- cbind(palette(brewer.pal(n = 8, name = "Set2")),
 # Load in data
 load("data/final.genus.rda")
 load("data/final.species.rda")
+load("data/final.species.gen.rda")
+load("data/final.genus.sp.rda")
 load("data/raw/clean_pathogen.rda")
 ```
 
@@ -75,8 +77,8 @@ p1 <- species_species %>%
   group_by(host) %>% 
   summarize(PSR = n(), WOS = WOS) %>%
   ggplot(aes(x = log(WOS), y = log(PSR))) +
-  geom_point(col = mypal[9], size = 1)+
-  geom_smooth(method = "lm", se = FALSE, size = 0.3, col = mypal[3])+
+  geom_point(col = mypal[4], size = 1)+
+  geom_smooth(method = "lm", se = FALSE, size = 0.3, col = mypal[1])+
   theme_minimal()+
   labs(y = "log(PSR)", x = "log(WOS Citations)")+
   labs(title = "WOS Citations vs PSR by species")+
@@ -100,8 +102,8 @@ p2 <- genus_genus %>%
   group_by(host) %>% 
   summarize(PSR = n(), WOS = WOS) %>%
   ggplot(aes(x = log(WOS), y = log(PSR))) +
-  geom_point(col = mypal[15], size = 1)+
-  geom_smooth(method = "lm", se = FALSE, size = 0.3, col = mypal[4])+
+  geom_point(col = mypal[3], size = 1)+
+  geom_smooth(method = "lm", se = FALSE, size = 0.3, col = mypal[1])+
   theme_minimal()+
   labs(y = "log(PSR)", x = "log(WOS Citations)")+
   labs(title = "WOS Citations vs PSR by genus")+
@@ -168,10 +170,30 @@ ggsave("figures/JAC/genus.pdf",
        height = 5,
        useDingbats = FALSE)
 
+# Genus host, species pathogen
+p1a <- genus_species_all %>%
+  ggplot(aes(x = shared.org))+
+  geom_density(fill = mypal[7])+
+  theme_minimal()+
+  labs(y = "Count", x = "Jaccard Index")+
+  labs(title = "Host pathogen sharing (Genus-Species)")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "none")
+ggsave("figures/JAC/genus.sp.pdf",
+       plot = p1a,
+       units = "in",
+       width = 6,
+       height = 5,
+       useDingbats = FALSE)
+
 # Species host, species pathogen
 p2 <- species_all %>%
   ggplot(aes(x = shared.org))+
-  geom_density(fill = mypal[5])+
+  geom_density(fill = mypal[9])+
   theme_minimal()+
   labs(y = "Count", x = "Jaccard Index")+
   labs(title = "Host pathogen sharing (Species-Species)")+
@@ -188,8 +210,26 @@ ggsave("figures/JAC/species.pdf",
        height = 5,
        useDingbats = FALSE)
 
+# Species host, genus pathogen
+p2a <- species_genus_all %>%
+  ggplot(aes(x = shared.org))+
+  geom_density(fill = mypal[2])+
+  theme_minimal()+
+  labs(y = "Count", x = "Jaccard Index")+
+  labs(title = "Host pathogen sharing (Species-Genus)")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "none")
+ggsave("figures/JAC/species.gen.pdf",
+       plot = p2a,
+       units = "in",
+       width = 6,
+       height = 5,
+       useDingbats = FALSE)
 ```
-
 
 ```{r Proportion vs WOS + Distance}
 # Run regression
