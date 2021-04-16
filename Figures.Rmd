@@ -262,7 +262,6 @@ ggplot(spec_predict, aes(x = V1, y = predicted))+
 
 ```{r Proportion vs. Distance Boxplots}
 # Species plot
-sd <- sd(species_all$shared.org)
 p1 <- species_all %>% 
   filter(shared.org > 0) %>%
   ggplot(aes(x = as.factor(distance), y = shared.org)) +
@@ -286,7 +285,6 @@ ggsave("figures/BOX/species.pdf",
        useDingbats = FALSE)
 
 # Species-genus plot
-sd <- sd(species_genus_all$shared.org)
 p1a <- species_genus_all %>% 
   filter(shared.org > 0) %>%
   ggplot(aes(x = as.factor(distance), y = shared.org)) +
@@ -310,7 +308,6 @@ ggsave("figures/BOX/species.gen.pdf",
        useDingbats = FALSE)
 
 # Genus plot
-sd <- sd(genus_all$shared.org)
 p2 <- genus_all %>% 
   filter(shared.org > 0) %>%
   ggplot(aes(x = as.factor(distance), y = shared.org)) +
@@ -334,7 +331,6 @@ ggsave("figures/BOX/genus.pdf",
        useDingbats = FALSE)
 
 # Genus-species plot
-sd <- sd(genus_species_all$shared.org)
 p2a <- genus_species_all %>% 
   filter(shared.org > 0) %>%
   ggplot(aes(x = as.factor(distance), y = shared.org)) +
@@ -351,6 +347,104 @@ p2a <- genus_species_all %>%
         legend.position = "none")
 
 ggsave("figures/BOX/genus.sp.pdf",
+       plot = p2a,
+       units = "in",
+       width = 6,
+       height = 6,
+       useDingbats = FALSE)
+```
+
+```{r Proportion vs. Distance Dist}
+# Species plot
+p1 <- species_all %>% 
+  filter(shared.org > 0)%>% 
+  ggplot(aes(x = shared.org, col = as.factor(distance))) +
+  geom_density()+
+  theme_minimal()+
+  scale_colour_manual(values = mypal)+
+  labs(x = "Proportion Pathogens Shared", col = "Distance" )+
+  labs(title = "Pathogen sharing distribution (Species-Species)", col = "Phylogenetic Distance")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "bottom")
+  
+
+ggsave("figures/DIS/species.pdf",
+       plot = p1,
+       units = "in",
+       width = 6,
+       height = 6,
+       useDingbats = FALSE)
+
+# Species-genera plot
+p1a <- species_genus_all %>% 
+  filter(shared.org > 0)%>% 
+  ggplot(aes(x = shared.org, col = as.factor(distance))) +
+  geom_density()+
+  theme_minimal()+
+  scale_colour_manual(values = mypal)+
+  labs(x = "Proportion Pathogens Shared", col = "Distance" )+
+  labs(title = "Pathogen sharing distribution (Species-Genus)", col = "Phylogenetic Distance")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "bottom")
+  
+
+ggsave("figures/DIS/species.gen.pdf",
+       plot = p1a,
+       units = "in",
+       width = 6,
+       height = 6,
+       useDingbats = FALSE)
+
+# Genus plot
+p2 <- genus_all %>% 
+  filter(shared.org > 0)%>% 
+  ggplot(aes(x = shared.org, col = as.factor(distance))) +
+  geom_density()+
+  theme_minimal()+
+  scale_colour_manual(values = mypal)+
+  labs(x = "Proportion Pathogens Shared", col = "Distance" )+
+  labs(title = "Pathogen sharing distribution (Genus-Genus)", col = "Phylogenetic Distance")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "bottom")
+  
+
+ggsave("figures/DIS/genus.pdf",
+       plot = p2,
+       units = "in",
+       width = 6,
+       height = 6,
+       useDingbats = FALSE)
+
+# Genus-species plot
+p2a <- genus_species_all %>% 
+  filter(shared.org > 0)%>% 
+  ggplot(aes(x = shared.org, col = as.factor(distance))) +
+  geom_density()+
+  theme_minimal()+
+  scale_colour_manual(values = mypal)+
+  labs(x = "Proportion Pathogens Shared", col = "Distance" )+
+  labs(title = "Pathogen sharing distribution (Genus-Species)", col = "Phylogenetic Distance")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "bottom")
+  
+
+ggsave("figures/DIS/genus.sp.pdf",
        plot = p2a,
        units = "in",
        width = 6,
