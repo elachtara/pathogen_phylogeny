@@ -129,6 +129,27 @@ get_cladogram(data = phylo_dist, filename = "data/phylo/species.dist.rda", type 
 get_cladogram(data = phylo_dist, filename = "data/phylo/genus.dist.rda", type = "genus")
 ```
 
+
+```{r Phylogeny}
+# Read in data
+Phylogeny <- read_excel("data/phylo/Phylogeny.xlsx", col_names = FALSE)
+genera <- Phylogeny$...1
+
+# Temporary data set for transforming
+tmp <- Phylogeny[,-1]
+colnames(tmp) <- rownames(tmp) <- genera
+tmp <- as.matrix(tmp)
+diag(tmp) <- 0
+tmp[upper.tri(tmp)] <- t(tmp)[upper.tri(tmp)]
+
+# Make pairwise comparisons
+xy <- t(combn(colnames(tmp), 2))
+phylogeny <- data.frame(xy, dist =  tmp[xy])
+colnames(phylogeny) <- c("org1", "org2", "distance")
+save(phylogeny, file = "data/phylo/phylogeny.rda")
+
+```
+
 ```{r Create sharing index}
 # Load in clean data if needed
 load("data/raw/clean_pathogen.rda")
@@ -194,7 +215,8 @@ species_genus_all <- na.omit(species_genus_all)
 save(species_genus_all, file = "data/final.species.gen.rda")
 ```
 
-```{r Join Genera-Genera}
+
+```{r Join Genera-Genera (clado)}
 # Load in necessary files
 load("data/raw/clean_pathogen.rda")
 load("data/sharing/genus.sharing.rda")
@@ -219,6 +241,34 @@ genus_all$shared.org <- sharing$shared.org[id]
 # remove any NA's (4063)
 genus_all <- na.omit(genus_all)
 save(genus_all, file = "data/final.genus.rda")
+```
+
+```{r Join Genera-Genera phylo}
+# Load in necessary files
+load("data/raw/clean_pathogen.rda")
+load("data/sharing/genus.sharing.rda")
+load("data/phylo/phylogeny.rda")
+
+# name conversion for later
+genus_genus$org1  <- genus_genus$host
+
+# join distance to WOS, remove sci for later, create unique ID (4186)
+genus_all <- left_join(phylogeny, genus_genus, by = "org1")
+genus_all <- genus_all %>% select(-host, -sci_name) %>%
+  distinct() %>%
+  mutate(distance = as.numeric(distance)) %>%
+  mutate(ID = paste(org1, org2, sep = "_"))
+
+# create unique ID in sharing file so we can join with rest of data (6903)
+sharing <- sharing %>%
+  mutate(ID = paste(org1, org2, sep = "_"))
+id <- match(genus_all$ID, sharing$ID)
+genus_all$shared.org <- sharing$shared.org[id]
+
+# remove any NA's (4063)
+genus_all[is.na(genus_all)] <- 0 
+genus_all.p <- genus_all
+save(genus_all.p, file = "data/final.genus.p.rda")
 ```
 
 ```{r Join Genera-Species}

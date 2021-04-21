@@ -22,6 +22,7 @@ load("data/final.species.rda")
 load("data/final.species.gen.rda")
 load("data/final.genus.sp.rda")
 load("data/raw/clean_pathogen.rda")
+load("data/final.genus.p.rda")
 ```
 
 ```{r Visualize WOS distribution}
@@ -330,7 +331,7 @@ ggsave("figures/BOX/genus.pdf",
        height = 6,
        useDingbats = FALSE)
 
-# Genus-species plot
+# Genus plot phylogeny
 p2a <- genus_species_all %>% 
   filter(shared.org > 0) %>%
   ggplot(aes(x = as.factor(distance), y = shared.org)) +
@@ -352,7 +353,64 @@ ggsave("figures/BOX/genus.sp.pdf",
        width = 6,
        height = 6,
        useDingbats = FALSE)
+
 ```
+
+```{r Genus Phylogeny}
+# Genus plot phylogeny
+p <- genus_all.p %>% 
+  filter(shared.org > 0) %>%
+  ggplot(aes(x = distance, y = shared.org)) +
+  geom_point(col = mypal[4])+
+  geom_smooth(method = "lm", se = FALSE, color = mypal[1])+
+  theme_minimal()+
+  labs(y = "Proportion Pathogens Shared", x = "Phylogenetic Distance")+
+  labs(title = "Pathogen sharing vs. Distance (Genus-Genus)")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "none")
+
+ggsave("figures/DOT/genus.pdf",
+       plot = p,
+       units = "in",
+       width = 6,
+       height = 6,
+       useDingbats = FALSE)
+
+
+# Regression
+mylm <- lm(shared.org ~ distance + WOS, genus_all.p)
+summary(mylm)
+
+# Genus plot phylogeny
+p2 <- genus_all.p %>% 
+  filter(shared.org > 0) %>%
+  ggplot(aes(x = distance, y = log(shared.org))) +
+  geom_point(col = mypal[5])+
+  geom_smooth(method = "lm", se = FALSE, color = mypal[1])+
+  theme_minimal()+
+  labs(y = "log(Proportion Pathogens Shared)", x = "Phylogenetic Distance")+
+  labs(title = "Pathogen sharing vs. Distance (Genus-Genus)")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "none")
+
+ggsave("figures/DOT/genus.log.pdf",
+       plot = p2,
+       units = "in",
+       width = 6,
+       height = 6,
+       useDingbats = FALSE)
+
+
+```
+
 
 ```{r Proportion vs. Distance Dist}
 # Species plot
