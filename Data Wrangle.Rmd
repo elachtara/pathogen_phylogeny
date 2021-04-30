@@ -324,7 +324,6 @@ sharing <- sharing %>%
   mutate(ID = paste(org1, org2, sep = "_"))
 id <- match(bin_genus_all$ID, sharing$ID)
 bin_genus_all$shared.org <- sharing$shared.org[id]
-
 ```
 
 
