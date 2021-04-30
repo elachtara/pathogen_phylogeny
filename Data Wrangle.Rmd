@@ -299,8 +299,31 @@ save(genus_species_all, file = "data/final.genus.sp.rda")
 ```
 
 ```{r Pathogen data}
-library(readxl)
-trophic_bins <- read_excel("data/path/trophic_bins.xlsx")
+# Load in necessary files
+load("data/raw/clean_pathogen.rda")
+load("data/sharing/genus.sharing.rda")
+load("data/phylo/phylogeny.rda")
+trophic_bins <- readxl::read_excel("data/path/trophic_bins.xlsx")
+trophic_bins <- trophic_bins %>% select(sci_name, bin) %>% 
+                                 filter(bin != 'REMOVE')%>% 
+                                 filter(bin != '0') 
+
+# Join in bin with other data
+bin_genus_genus <- left_join(trophic_bins, genus_genus, by = "sci_name")
+bin_genus_genus$org1  <- bin_genus_genus$host
+
+# join distance to WOS, remove sci for later, create unique ID (4186)
+bin_genus_all <- left_join(phylogeny, bin_genus_genus, by = "org1")
+bin_genus_all <- bin_genus_all %>% select(-host) %>%
+  distinct() %>%
+  mutate(distance = as.numeric(distance)) %>%
+  mutate(ID = paste(org1, org2, sep = "_"))
+
+# create unique ID in sharing file so we can join with rest of data (6903)
+sharing <- sharing %>%
+  mutate(ID = paste(org1, org2, sep = "_"))
+id <- match(bin_genus_all$ID, sharing$ID)
+bin_genus_all$shared.org <- sharing$shared.org[id]
 
 ```
 
