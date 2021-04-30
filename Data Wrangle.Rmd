@@ -324,6 +324,8 @@ sharing <- sharing %>%
   mutate(ID = paste(org1, org2, sep = "_"))
 id <- match(bin_genus_all$ID, sharing$ID)
 bin_genus_all$shared.org <- sharing$shared.org[id]
+bin_genus_all <- bin_genus_all %>% na.omit()
+save(bin_genus_all, file = "data/path/genus.rda")
 ```
 
 
