@@ -298,4 +298,10 @@ genus_species_all <- na.omit(genus_species_all)
 save(genus_species_all, file = "data/final.genus.sp.rda")
 ```
 
+```{r Pathogen data}
+library(readxl)
+trophic_bins <- read_excel("data/path/trophic_bins.xlsx")
+
+```
+
 
