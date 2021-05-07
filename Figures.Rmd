@@ -373,6 +373,24 @@ ggsave("figures/DOT/genus.pdf",
 
 ```
 
+```{r Phylo Tree}
+# Read in and flip over axis
+Phylogeny <- read_excel("data/phylo/Phylogeny.xlsx", col_names = FALSE)
+genera <- Phylogeny$...1
+tmp <- Phylogeny[,-1]
+colnames(tmp) <- rownames(tmp) <- genera
+tmp <- as.matrix(tmp)
+diag(tmp) <- 0
+tmp[upper.tri(tmp)] <- t(tmp)[upper.tri(tmp)]
+
+my_dist_mat <- as.dist(tmp)
+
+my_nj <- ape::nj(my_dist_mat)
+pdf(file = "figures/TREE/genus.pdf", width = 6, height = 8)
+plot(my_nj, cex = 0.3, edge.width = 0.3)
+```
+
+
 ```{r Proportion vs. Distance Dist}
 # Species plot
 p1 <- species_all %>% 
