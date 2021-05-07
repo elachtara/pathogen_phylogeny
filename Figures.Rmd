@@ -27,67 +27,14 @@ load("data/final.genus.p.rda")
 load("data/path/genus.rda")
 ```
 
-```{r Visualize WOS distribution}
-# Genus WOS plot
-p1 <- genus_genus %>%
-  select(host, WOS) %>%
-  distinct(host, .keep_all = TRUE) %>%
-  ggplot(aes(x = log(WOS))) +
-  geom_density(fill = mypal[9])+
-  theme_minimal()+
-  labs(y = "Count", x = "log(WOS Citations)")+
-  labs(title = "WOS Citations by Genus")+
-  theme(#plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-        #axis.title.y = element_text(size = 12, face = "bold"),
-        #axis.title.x = element_text(size = 12, face = "bold"),
-        plot.title = element_blank(),
-        axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
-        axis.text.x = element_text(size = 10),
-        axis.text.y = element_text(size = 10),
-        legend.position = "none")
-
-ggsave("figures/WOS/genus.pdf",
-       plot = p1,
-       units = "in",
-       width = 3,
-       height = 3,
-       useDingbats = FALSE)
-
-p2 <- species_species %>%
-  select(host, WOS) %>%
-  distinct(host, .keep_all = TRUE) %>%
-  ggplot(aes(x = log(WOS))) +
-  geom_density(fill = mypal[13])+
-  theme_minimal()+
-  labs(y = "Count", x = "log(WOS Citations)")+
-  labs(title = "WOS Citations by Species")+
-  theme(#plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-        #axis.title.y = element_text(size = 12, face = "bold"),
-        #axis.title.x = element_text(size = 12, face = "bold"),
-        axis.text.x = element_text(size = 8),
-        axis.text.y = element_text(size = 8),
-        plot.title = element_blank(),
-        axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
-        legend.position = "none")
-
-ggsave("figures/WOS/species.pdf",
-       plot = p2,
-       units = "in",
-       width = 2,
-       height = 2,
-       useDingbats = FALSE)
-```
-
 ```{r Visualize log(WOS) vs log(PSR)}
 # Genus plot
 p2 <- genus_genus %>% 
   group_by(host) %>% 
   summarize(PSR = n(), WOS = WOS) %>%
   ggplot(aes(x = log(WOS), y = log(PSR))) +
-  geom_point(col = mypal[9], size = 3)+
-  geom_smooth(method = "lm", se = FALSE, size = 0.5, col = mypal[9])+
+  geom_point(col = mypal[8], size = 3)+
+  geom_smooth(method = "lm", se = FALSE, size = 0.5, col = mypal[8])+
   theme_minimal()+
   labs(y = "log(PSR)", x = "log(WOS Citations)")+
   labs(title = "WOS Citations vs PSR (Genus)")+
@@ -114,8 +61,8 @@ p1 <- species_species %>%
   group_by(host) %>% 
   summarize(PSR = n(), WOS = WOS) %>%
   ggplot(aes(x = log(WOS), y = log(PSR))) +
-  geom_point(col = mypal[13], size = 3)+
-  geom_smooth(method = "lm", se = FALSE, size = 0.5, col = mypal[13])+
+  geom_point(col = mypal[1], size = 3)+
+  geom_smooth(method = "lm", se = FALSE, size = 0.5, col = mypal[1])+
   theme_minimal()+
   labs(y = "log(PSR)", x = "log(WOS Citations)")+
   labs(title = "WOS Citations vs PSR (Species)")+
@@ -145,19 +92,19 @@ p3 <- rbind(species_species, genus_genus) %>%
   summarize(PSR = n(), WOS = WOS, group = group) %>%
   ggplot(aes(x = log(WOS), y = log(PSR), col = group)) +
   geom_point(size = 3)+
-  scale_colour_manual(values = mypal[c(9,13)])+
+  scale_colour_manual(values = mypal[c(8,1)])+
   geom_smooth(aes(group = group), method = "lm", se = FALSE, size = 0.5)+
   theme_minimal()+
   labs(y = "log(PSR)", x = "log(WOS Citations)", col = "taxonomy level")+
   labs(title = "WOS Citations vs PSR")+
-  theme(#plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-        #axis.title.y = element_text(size = 12, face = "bold"),
-        #axis.title.x = element_text(size = 12, face = "bold"),
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
         axis.text.x = element_text(size = 10),
         axis.text.y = element_text(size = 10),
-        plot.title = element_blank(),
-        axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
+        #plot.title = element_blank(),
+        #axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
         legend.position = "bottom")
 
 ggsave("figures/PSR/both.pdf",
@@ -167,58 +114,6 @@ ggsave("figures/PSR/both.pdf",
        height = 4,
        useDingbats = FALSE)
 ```
-
-```{r Visualize pathogen sharing}
-# Genus host, genus pathogen
-p1 <- genus_all %>%
-  filter(shared.org > 0) %>%
-  ggplot(aes(x = shared.org))+
-  geom_density(fill = mypal[9])+
-  theme_minimal()+
-  labs(y = "Count", x = "Proportion Shared")+
-  labs(title = "Host pathogen sharing (Genus-Genus)")+
-  theme(#plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-        #axis.title.y = element_text(size = 12, face = "bold"),
-        #axis.title.x = element_text(size = 12, face = "bold"),
-        axis.text.x = element_text(size = 8),
-        axis.text.y = element_text(size = 8),
-        plot.title = element_blank(),
-        axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
-        legend.position = "none")
-ggsave("figures/JAC/genus.pdf",
-       plot = p1,
-       units = "in",
-       width = 2,
-       height = 2,
-       useDingbats = FALSE)
-
-
-# Species host, species pathogen
-p2 <- species_all %>%
-  filter(shared.org > 0) %>%
-  ggplot(aes(x = shared.org))+
-  geom_density(fill = mypal[13])+
-  theme_minimal()+
-  labs(y = "Count", x = "Proportion Shared")+
-  labs(title = "Host pathogen sharing (Species-Species)")+
-  theme(#plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-        #axis.title.y = element_text(size = 12, face = "bold"),
-        #axis.title.x = element_text(size = 12, face = "bold"),
-        axis.text.x = element_text(size = 8),
-        axis.text.y = element_text(size = 8),
-        plot.title = element_blank(),
-        axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
-        legend.position = "none")
-ggsave("figures/JAC/species.pdf",
-       plot = p2,
-       units = "in",
-       width = 2,
-       height = 2,
-       useDingbats = FALSE)
-```
-
 
 ```{r Proportion vs. Distance Boxplots}
 # Species plot
@@ -380,9 +275,81 @@ ggsave("figures/DOT/genus.mod.pdf",
        useDingbats = FALSE)
 ```
 
+```{r Trophic Bin}
+# Update trophic bins to be less specific
+bin_genus_all <- bin_genus_all %>% mutate(bin = case_when(
+  (bin == 'N') ~ 'Necrotrophic',
+  (bin == 'B') ~ 'Biotrophic',
+  (bin %in% c('N/H','H', 'B/H')) ~ 'Hemitrophic',
+  (bin %in% c('I', 'S', 'M', 'E')) ~ 'Non-pathogenic'))
+
+
+p1 <- bin_genus_all %>% 
+  ggplot( aes(x = distance, y = shared.org))+
+  geom_point(aes(col = bin), alpha = 0.7)+
+  geom_smooth(aes(col = bin), method = "lm", se = FALSE, lwd = 0.7)+
+  geom_smooth(method = "lm", se = FALSE, lwd = 0.5, col = "black", linetype = "dashed")+
+  theme_minimal() +
+  scale_colour_manual(values = mypal[c(1, 3, 5,9)])+
+  labs(y = "Proportion Pathogens Shared", x = "Phylogenetic Distance", col = "Tropic Bin")+
+  labs(title = "Pathogen sharing vs. Distance (Genus-Genus)")+
+  theme(#plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        plot.title = element_blank(),
+        #axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.position = "bottom")
+
+ggsave("figures/BIN/genus.pdf",
+       plot = p1,
+       units = "in",
+       width = 6,
+       height = 6,
+       useDingbats = FALSE)
+
+# Get coefficients by bin
+spl <- with(bin_genus_all, split(bin_genus_all, list(bin = bin)))
+
+coefLM <- function(x) {
+  mod <- lm(shared.org ~ distance, data = x)
+  c(summary(mod)$coefficients[2], summary(mod)$coefficients[8])
+}
+
+coefs <- sapply(spl, coefLM) %>% t() %>%  as.data.frame() %>% tibble::rownames_to_column() 
+colnames(coefs) <- c('bin', 'coef', 'p')
+#coefs$bin <-stringr::str_replace(rownames(coefs), ".distance", "")
+
+p2 <- coefs %>% 
+  ggplot(aes(x = reorder(bin, coef), y = coef, fill = as.factor(bin))) +
+  geom_bar(stat = "identity", color = "black", 
+           position = position_dodge()) +
+  theme_minimal()+
+  geom_text(aes(label = round(coef, 3)), vjust = -1)+
+  scale_fill_manual(values = mypal[c(1, 3, 5,9)])+
+  labs(y = "Distance Coefficient", x = "Trophic Bin")+
+  labs(title = "Pathogen sharing vs. Distance by trophic Bin")+
+  theme(#plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 12, face = "bold"),
+        axis.text.y = element_text(size = 12, face = "bold"),
+        plot.title = element_blank(),
+        legend.position = "none")
+
+ggsave("figures/BIN/genus.coef.pdf",
+       plot = p2,
+       units = "in",
+       width = 8,
+       height = 3,
+       useDingbats = FALSE)
+```
+
 ```{r Phylo Tree}
 # Read in and flip over axis
-Phylogeny <- read_excel("data/phylo/Phylogeny.xlsx", col_names = FALSE)
+Phylogeny <- readxl::read_excel("data/phylo/Phylogeny.xlsx", col_names = FALSE)
 genera <- Phylogeny$...1
 tmp <- Phylogeny[,-1]
 colnames(tmp) <- rownames(tmp) <- genera
@@ -393,8 +360,8 @@ tmp[upper.tri(tmp)] <- t(tmp)[upper.tri(tmp)]
 my_dist_mat <- as.dist(tmp)
 
 my_nj <- ape::nj(my_dist_mat)
-pdf(file = "figures/TREE/genus.pdf", width = 6, height = 8)
-plot(my_nj, cex = 0.3, edge.width = 0.3)
+pdf(file = "figures/TREE/genus.pdf", width = 7, height = 8)
+plot(my_nj, "unrooted", cex = 0.4, edge.width = 0.3)
 ```
 
 ```{r Proportion vs. Distance Dist}
@@ -495,188 +462,6 @@ ggsave("figures/DIS/genus.sp.pdf",
        useDingbats = FALSE)
 ```
 
-```{r Proportion vs. Distance Barplots}
-# Species plot
-p1 <- species_all %>% 
-  group_by(distance) %>%
-  summarize(mean.shared = mean(shared.org), sd = sd(shared.org)) %>% 
-  ggplot(aes(x = as.factor(distance), y = mean.shared, fill = as.factor(distance))) +
-  geom_bar(stat = "identity", color = "black", 
-           position = position_dodge()) +
-  geom_errorbar(aes(ymin = mean.shared-sd, 
-                    ymax = mean.shared+sd),
-                    width = 0.2,
-                    position = position_dodge(0.9))+
-  theme_minimal()+
-  scale_fill_manual(values = mypal)+
-  labs(y = "Proportion Pathogens Shared", x = "Phylogenetic Distance")+
-  labs(title = "Pathogen sharing vs. Distance (Species-Species)")+
-  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-        axis.title.y = element_text(size = 12, face = "bold"),
-        axis.title.x = element_text(size = 12, face = "bold"),
-        axis.text.x = element_text(size = 10),
-        axis.text.y = element_text(size = 10),
-        legend.position = "none")
-
-ggsave("figures/BAR/species.pdf",
-       plot = p1,
-       units = "in",
-       width = 6,
-       height = 6,
-       useDingbats = FALSE)
-
-# Species-genus plot
-p1a <- species_genus_all %>% 
-  group_by(distance) %>%
-  summarize(mean.shared = mean(shared.org), sd = sd(shared.org)) %>% 
-  ggplot(aes(x = as.factor(distance), y = mean.shared, fill = as.factor(distance))) +
-  geom_bar(stat = "identity", color = "black", 
-           position = position_dodge()) +
-  geom_errorbar(aes(ymin = mean.shared-sd, 
-                    ymax = mean.shared+sd),
-                    width = 0.2,
-                    position = position_dodge(0.9))+
-  theme_minimal()+
-  scale_fill_manual(values = mypal)+
-  labs(y = "Proportion Pathogens Shared", x = "Phylogenetic Distance")+
-  labs(title = "Pathogen sharing vs. Distance (Species-Genus)")+
-  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-        axis.title.y = element_text(size = 12, face = "bold"),
-        axis.title.x = element_text(size = 12, face = "bold"),
-        axis.text.x = element_text(size = 10),
-        axis.text.y = element_text(size = 10),
-        legend.position = "none")
-
-ggsave("figures/BAR/species.gen.pdf",
-       plot = p1a,
-       units = "in",
-       width = 6,
-       height = 6,
-       useDingbats = FALSE)
-
-# Genus plot
-p2 <- genus_all %>% 
-  group_by(distance) %>%
-  summarize(mean.shared = mean(shared.org), sd = sd(shared.org)) %>% 
-  ggplot(aes(x = as.factor(distance), y = mean.shared, fill = as.factor(distance))) +
-  geom_bar(stat = "identity", color = "black", 
-           position = position_dodge()) +
-  geom_errorbar(aes(ymin = mean.shared-sd, 
-                    ymax = mean.shared+sd),
-                    width = 0.2,
-                    position = position_dodge(0.9))+
-  theme_minimal()+
-  scale_fill_manual(values = mypal)+
-  labs(y = "Proportion Pathogens Shared", x = "Phylogenetic Distance")+
-  labs(title = "Pathogen sharing vs. Distance (Genus-Genus)")+
-  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-        axis.title.y = element_text(size = 12, face = "bold"),
-        axis.title.x = element_text(size = 12, face = "bold"),
-        axis.text.x = element_text(size = 10),
-        axis.text.y = element_text(size = 10),
-        legend.position = "none")
-
-ggsave("figures/BAR/genus.pdf",
-       plot = p2,
-       units = "in",
-       width = 6,
-       height = 6,
-       useDingbats = FALSE)
-
-# Genus-speciesplot
-p2a <- genus_species_all %>% 
-  group_by(distance) %>%
-  summarize(mean.shared = mean(shared.org), sd = sd(shared.org)) %>% 
-  ggplot(aes(x = as.factor(distance), y = mean.shared, fill = as.factor(distance))) +
-  geom_bar(stat = "identity", color = "black", 
-           position = position_dodge()) +
-  geom_errorbar(aes(ymin = mean.shared-sd, 
-                    ymax = mean.shared+sd),
-                    width = 0.2,
-                    position = position_dodge(0.9))+
-  theme_minimal()+
-  scale_fill_manual(values = mypal)+
-  labs(y = "Proportion Pathogens Shared", x = "Phylogenetic Distance")+
-  labs(title = "Pathogen sharing vs. Distance (Genus-Species)")+
-  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-        axis.title.y = element_text(size = 12, face = "bold"),
-        axis.title.x = element_text(size = 12, face = "bold"),
-        axis.text.x = element_text(size = 10),
-        axis.text.y = element_text(size = 10),
-        legend.position = "none")
-
-ggsave("figures/BAR/genus.sp.pdf",
-       plot = p2a,
-       units = "in",
-       width = 6,
-       height = 6,
-       useDingbats = FALSE)
-```
-
-```{r Trophic Bin}
-p1 <- bin_genus_all %>% 
-  filter(bin %in% c('B','N/H', 'H', 'B/H', 'N')) %>%
-  ggplot( aes(x = distance, y = shared.org))+
-  geom_point(aes(col = bin, alpha = 0.4))+
-  geom_smooth(method = "lm", se = FALSE, col = "black", lwd = 0.3)+
-  facet_wrap(~bin, nrow = 1)+
-  theme_minimal() +
-  scale_colour_manual(values = mypal[-2])+
-  labs(y = "Proportion Pathogens Shared", x = "Phylogenetic Distance")+
-  labs(title = "Pathogen sharing vs. Distance (Genus-Genus)")+
-  theme(#plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-        #axis.title.y = element_text(size = 12, face = "bold"),
-        #axis.title.x = element_text(size = 12, face = "bold"),
-        axis.text.x = element_text(size = 12),
-        axis.text.y = element_text(size = 12),
-        plot.title = element_blank(),
-        axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
-        legend.position = "none")
-
-ggsave("figures/BIN/genus.pdf",
-       plot = p1,
-       units = "in",
-       width = 10,
-       height = 2.5,
-       useDingbats = FALSE)
-
-# Get coefficients by bin
-spl <- with(bin_genus_all, split(bin_genus_all, list(bin = bin)))
-
-coefLM <- function(x) {
-  mod <- lm(shared.org ~ distance, data = x)
-  c(summary(mod)$coefficients[2], summary(mod)$coefficients[8])
-}
-
-coefs <- sapply(spl, coefLM) %>% t() %>%  as.data.frame() %>% tibble::rownames_to_column() 
-colnames(coefs) <- c('Model', 'Coef', 'p')
-coefs <- coefs %>% filter(Model %in% c('B','N/H', 'H', 'B/H', 'N'))
-#coefs$bin <-stringr::str_replace(rownames(coefs), ".distance", "")
-
-p2 <- coefs %>% filter(bin %in% c('B','N/H', 'H', 'B/H', 'N')) %>%
-  ggplot(aes(x = reorder(bin, coef), y = coef, fill = as.factor(bin))) +
-  geom_bar(stat = "identity", color = "black", 
-           position = position_dodge()) +
-  theme_minimal()+
-  geom_text(aes(label = round(coef, 3)), vjust = -1)+
-  scale_fill_manual(values = mypal[-2])+
-  labs(y = "Distance Coefficient", x = "Trophic Bin")+
-  labs(title = "Pathogen sharing vs. Distance by trophic Bin")+
-  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-        axis.title.y = element_text(size = 12, face = "bold"),
-        axis.title.x = element_text(size = 12, face = "bold"),
-        axis.text.x = element_text(size = 10, face = "bold"),
-        axis.text.y = element_text(size = 10, face = "bold"),
-        legend.position = "none")
-
-ggsave("figures/BIN/genus.coef.pdf",
-       plot = p2,
-       units = "in",
-       width = 8,
-       height = 4,
-       useDingbats = FALSE)
-```
 
 ```{r Tables}
 # tbl1
@@ -684,3 +469,105 @@ rbind(genus.mod.coefs, coefs) %>%
   mutate(Coef = round(as.numeric(Coef), 4)) 
 ```
 
+```{r non}
+# Genus WOS plot
+p1 <- genus_genus %>%
+  select(host, WOS) %>%
+  distinct(host, .keep_all = TRUE) %>%
+  ggplot(aes(x = log(WOS))) +
+  geom_density(fill = mypal[8])+
+  theme_minimal()+
+  labs(y = "Count", x = "log(WOS Citations)")+
+  labs(title = "WOS Citations by Genus")+
+  theme(#plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        #axis.title.y = element_text(size = 12, face = "bold"),
+        #axis.title.x = element_text(size = 12, face = "bold"),
+        plot.title = element_blank(),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = "none")
+
+ggsave("figures/NON/WOS/genus.pdf",
+       plot = p1,
+       units = "in",
+       width = 3,
+       height = 3,
+       useDingbats = FALSE)
+
+p2 <- species_species %>%
+  select(host, WOS) %>%
+  distinct(host, .keep_all = TRUE) %>%
+  ggplot(aes(x = log(WOS))) +
+  geom_density(fill = mypal[1])+
+  theme_minimal()+
+  labs(y = "Count", x = "log(WOS Citations)")+
+  labs(title = "WOS Citations by Species")+
+  theme(#plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        #axis.title.y = element_text(size = 12, face = "bold"),
+        #axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 8),
+        axis.text.y = element_text(size = 8),
+        plot.title = element_blank(),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        legend.position = "none")
+
+ggsave("figures/NON/WOS/species.pdf",
+       plot = p2,
+       units = "in",
+       width = 2,
+       height = 2,
+       useDingbats = FALSE)
+
+# Genus host, genus pathogen
+p1 <- genus_all %>%
+  filter(shared.org > 0) %>%
+  ggplot(aes(x = shared.org))+
+  geom_density(fill = mypal[8])+
+  theme_minimal()+
+  labs(y = "Count", x = "Proportion Shared")+
+  labs(title = "Host pathogen sharing (Genus-Genus)")+
+  theme(#plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        #axis.title.y = element_text(size = 12, face = "bold"),
+        #axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 8),
+        axis.text.y = element_text(size = 8),
+        plot.title = element_blank(),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        legend.position = "none")
+
+ggsave("figures/NON/JAC/genus.pdf",
+       plot = p1,
+       units = "in",
+       width = 2,
+       height = 2,
+       useDingbats = FALSE)
+
+
+# Species host, species pathogen
+p2 <- species_all %>%
+  filter(shared.org > 0) %>%
+  ggplot(aes(x = shared.org))+
+  geom_density(fill = mypal[1])+
+  theme_minimal()+
+  labs(y = "Count", x = "Proportion Shared")+
+  labs(title = "Host pathogen sharing (Species-Species)")+
+  theme(#plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        #axis.title.y = element_text(size = 12, face = "bold"),
+        #axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 8),
+        axis.text.y = element_text(size = 8),
+        plot.title = element_blank(),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        legend.position = "none")
+ggsave("figures/NON/JAC/species.pdf",
+       plot = p2,
+       units = "in",
+       width = 2,
+       height = 2,
+       useDingbats = FALSE)
+```
