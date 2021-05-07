@@ -219,30 +219,6 @@ ggsave("figures/JAC/species.pdf",
        useDingbats = FALSE)
 ```
 
-```{r Proportion vs WOS + Distance}
-# Run regression
-mylm <- lm(shared.org ~ WOS + distance, species_all)
-predicted <- mylm %>% predict(species_all)
-
-# Species Prediction
-spec_predict <- as.data.frame(cbind(species_all$shared.org, predicted))
-
-summary(mylm)
-
-ggplot(spec_predict, aes(x = V1, y = predicted))+
-  geom_point()+
-  geom_smooth(method = "lm")+
-  theme_minimal()+
-  labs(x = "True shared", y = "Predicted shared")+
-  labs(title = "Shared.org ~ WOS + distance")+
-  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-        axis.title.y = element_text(size = 12, face = "bold"),
-        axis.title.x = element_text(size = 12, face = "bold"),
-        axis.text.x = element_text(size = 10),
-        axis.text.y = element_text(size = 10),
-        legend.position = "none")
-
-```
 
 ```{r Proportion vs. Distance Boxplots}
 # Species plot
@@ -349,7 +325,7 @@ colnames(genus.mod.coefs) <- c('Model', 'Coef', 'p')
 p <- genus_all.p %>% 
   filter(shared.org > 0) %>%
   ggplot(aes(x = distance, y = shared.org)) +
-  geom_point(col = mypal[2])+
+  geom_point(col = mypal[1])+
   geom_smooth(method = "lm", se = FALSE, color = "black", lwd = 0.5)+
   theme_minimal()+
   labs(y = "Proportion Pathogens Shared", x = "Phylogenetic Distance")+
@@ -371,6 +347,37 @@ ggsave("figures/DOT/genus.pdf",
        height = 6,
        useDingbats = FALSE)
 
+
+# Run regression
+mylm <- lm(shared.org ~ WOS + distance, genus_all.p)
+predicted <- mylm %>% predict(genus_all.p)
+
+# Species Prediction
+spec_predict <- as.data.frame(cbind(genus_all.p$shared.org, predicted))
+
+# Genus plot phylogeny
+p2 <- ggplot(spec_predict, aes(x = V1, y = predicted)) +
+  geom_point(col = mypal[1])+
+  geom_smooth(method = "lm", se = FALSE, color = "black", lwd = 0.5)+
+  theme_minimal()+
+  labs(x = "True shared", y = "Predicted shared")+
+  labs(title = "Shared.org ~ WOS + distance")+
+  theme(#plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        #axis.title.y = element_text(size = 12, face = "bold"),
+       # axis.title.x = element_text(size = 12, face = "bold"),
+        plot.title = element_blank(),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        legend.position = "none")
+
+ggsave("figures/DOT/genus.mod.pdf",
+       plot = p2,
+       units = "in",
+       width = 6,
+       height = 6,
+       useDingbats = FALSE)
 ```
 
 ```{r Phylo Tree}
@@ -389,7 +396,6 @@ my_nj <- ape::nj(my_dist_mat)
 pdf(file = "figures/TREE/genus.pdf", width = 6, height = 8)
 plot(my_nj, cex = 0.3, edge.width = 0.3)
 ```
-
 
 ```{r Proportion vs. Distance Dist}
 # Species plot
