@@ -11,6 +11,8 @@ knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 library(ggplot2)
 library(RColorBrewer)
+library(knitr)
+library(kableExtra)
 
 # Define color pallette
 mypal <- palette(brewer.pal(n = 10, name = "Set3"))
@@ -338,6 +340,11 @@ ggsave("figures/BOX/genus.sp.pdf",
 ```
 
 ```{r Genus Phylogeny}
+# Model
+genus.mod <- summary(lm(shared.org ~ distance, data = genus_all.p))
+genus.mod.coefs <- cbind('All', genus.mod$coefficients[2], genus.mod$coefficients[8]) %>% as.data.frame()
+colnames(genus.mod.coefs) <- c('Model', 'Coef', 'p')
+
 # Genus plot phylogeny
 p <- genus_all.p %>% 
   filter(shared.org > 0) %>%
@@ -364,10 +371,6 @@ ggsave("figures/DOT/genus.pdf",
        height = 6,
        useDingbats = FALSE)
 
-
-# Regression
-mylm <- lm(shared.org ~ distance + WOS, genus_all.p)
-summary(mylm)
 ```
 
 ```{r Proportion vs. Distance Dist}
@@ -618,11 +621,14 @@ ggsave("figures/BIN/genus.pdf",
 spl <- with(bin_genus_all, split(bin_genus_all, list(bin = bin)))
 
 coefLM <- function(x) {
-  coef(lm(shared.org ~ distance, data = x))[2]
+  mod <- lm(shared.org ~ distance, data = x)
+  c(summary(mod)$coefficients[2], summary(mod)$coefficients[8])
 }
 
-coefs <- sapply(spl, coefLM) %>% as.data.frame() %>% rename('coef' = '.')
-coefs$bin <-stringr::str_replace(rownames(coefs), ".distance", "")
+coefs <- sapply(spl, coefLM) %>% t() %>%  as.data.frame() %>% tibble::rownames_to_column() 
+colnames(coefs) <- c('Model', 'Coef', 'p')
+coefs <- coefs %>% filter(Model %in% c('B','N/H', 'H', 'B/H', 'N'))
+#coefs$bin <-stringr::str_replace(rownames(coefs), ".distance", "")
 
 p2 <- coefs %>% filter(bin %in% c('B','N/H', 'H', 'B/H', 'N')) %>%
   ggplot(aes(x = reorder(bin, coef), y = coef, fill = as.factor(bin))) +
@@ -646,5 +652,11 @@ ggsave("figures/BIN/genus.coef.pdf",
        width = 8,
        height = 4,
        useDingbats = FALSE)
+```
+
+```{r Tables}
+# tbl1
+rbind(genus.mod.coefs, coefs) %>% 
+  mutate(Coef = round(as.numeric(Coef), 4)) 
 ```
 
