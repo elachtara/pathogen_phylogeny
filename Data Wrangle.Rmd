@@ -129,7 +129,6 @@ get_cladogram(data = phylo_dist, filename = "data/phylo/species.dist.rda", type 
 get_cladogram(data = phylo_dist, filename = "data/phylo/genus.dist.rda", type = "genus")
 ```
 
-
 ```{r Phylogeny}
 # Read in data
 Phylogeny <- read_excel("data/phylo/Phylogeny.xlsx", col_names = FALSE)
@@ -215,7 +214,6 @@ species_genus_all <- na.omit(species_genus_all)
 save(species_genus_all, file = "data/final.species.gen.rda")
 ```
 
-
 ```{r Join Genera-Genera (clado)}
 # Load in necessary files
 load("data/raw/clean_pathogen.rda")
@@ -298,7 +296,7 @@ genus_species_all <- na.omit(genus_species_all)
 save(genus_species_all, file = "data/final.genus.sp.rda")
 ```
 
-```{r Pathogen data}
+```{r Bins}
 # Load in necessary files
 load("data/raw/clean_pathogen.rda")
 load("data/sharing/genus.sharing.rda")
@@ -325,6 +323,13 @@ sharing <- sharing %>%
 id <- match(bin_genus_all$ID, sharing$ID)
 bin_genus_all$shared.org <- sharing$shared.org[id]
 bin_genus_all <- bin_genus_all %>% na.omit()
+
+bin_genus_all <- bin_genus_all %>% mutate(bin = case_when(
+  (bin == 'N') ~ 'Necrotrophic',
+  (bin == 'B') ~ 'Biotrophic',
+  (bin %in% c('N/H','H', 'B/H')) ~ 'Hemitrophic',
+  (bin %in% c('I', 'S', 'M', 'E')) ~ 'Non-pathogenic'))
+
 save(bin_genus_all, file = "data/path/genus.rda")
 ```
 
