@@ -189,7 +189,7 @@ genus_all$shared.org <- sharing$shared.org[id]
 genus_all[is.na(genus_all)] <- 0 
 genus_all.p <- genus_all
 save(genus_all.p, file = "data/final.genus.p.rda")
-writexl::write_xlsx(genus_all.p, filename = "data/final.genus.p.xlsx")
+writexl::write_xlsx(genus_all.p,"data/final.genus.p.xlsx")
 
 # remove data
 rm(genus_all, phylogeny, sharing)
