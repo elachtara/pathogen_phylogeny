@@ -21,8 +21,6 @@ binpal <- c('chartreuse4', 'gold', 'cornflowerblue', 'gray60')
 # Load in data
 load("data/final.genus.rda")
 load("data/final.species.rda")
-load("data/final.species.gen.rda")
-load("data/final.genus.sp.rda")
 load("data/raw/clean_pathogen.rda")
 load("data/final.genus.p.rda")
 ```
@@ -246,6 +244,33 @@ ggsave("figures/BOX/genus.pdf",
        height = 4,
        useDingbats = FALSE)
 ```
+
+
+```{r}
+load("data/final.genus.p.rda")
+genus_all.p %>%
+  filter(hostfam != 0) %>%
+  ggplot( aes(x = distance, y = shared.org))+
+  geom_point(aes(col =  hostfam), alpha = 0.8)+
+  geom_smooth(aes(col = hostfam), method = "lm", se = FALSE, lwd = 0.7)+
+  facet_wrap(~hostfam)
+  geom_smooth(method = "lm", se = FALSE, lwd = 0.5, col = "black", linetype = "dashed")+
+  ggpubr::theme_pubr() +
+  scale_colour_manual(values = binpal)+
+  labs(y = "Proportion Pathogens Shared", x = "Phylogenetic Distance", col = "Tropic Bin")+
+  labs(title = "Pathogen sharing vs. Distance (Genus-Genus)")+
+  theme(#plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        legend.text = element_text(size = 8),
+        plot.title = element_blank(),
+        #axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.position = "bottom")
+```
+
 
 ```{r Genus Phylogeny}
 # Model
