@@ -21,16 +21,23 @@ source('functions/Sharing_index.R')
 ```
 
 ```{r Data read in}
-# Read in Data, join all three families
+# Read in Data, join all three families (17857)
 fam1 <- read_excel("data/raw/m_hood_fams.xlsx", sheet = "Sheet1") %>% clean_names() 
 fam2 <- read_excel("data/raw/m_hood_fams.xlsx", sheet = "Sheet2") %>% clean_names()
 fam3 <- read_excel("data/raw/m_hood_fams.xlsx", sheet = "Sheet3") %>% clean_names() 
 all_fams <- rbind(fam1, fam2, fam3)
+
+# Cleanup family names
+all_fams <- all_fams %>% mutate(hostfam = case_when(
+  grepl("CARYOPHYLLACEAE", hostfam) | grepl("Caryophyllaceae", hostfam) ~ "Caryophyllaceae",
+  grepl("POLYGONACEAE", hostfam) | grepl("Polygonaceae", hostfam) ~ "Polygonaceae",
+  grepl("AMARANTHACEAE", hostfam) | grepl("Amaranthaceae", hostfam) ~ "Amaranthaceae"))
+
+# remove by family data
 rm(fam1, fam2, fam3)
 ```
 
-
-```{r Synonymy Correction, Target Removal}
+```{r Synonymy Correction, target removal}
 # Read in keys, replace raw name with new name
 # Plants name correction
 plants_key <- read_excel("data/raw/key.xlsx", sheet = "plants")
@@ -44,11 +51,10 @@ id <- match(all_fams$sci_name, fungi_key$raw_name)
 all_fams$sci_name <- fungi_key$new_name[id]
 rm(id)
 
-# Remove duplicate and NA entries
-clean_pathogen <- all_fams %>% select(sci_name, host) %>% distinct() %>% na.omit()
-```
+# Remove duplicate and NA entries (5663)
+clean_pathogen <- all_fams %>% select(sci_name, host, hostfam) %>% distinct() %>% na.omit()
 
-```{r Target removal}
+# Target removal
 # Define a function to help us later
 `%notin%` <- Negate(`%in%`)
 
@@ -57,9 +63,11 @@ clean_pathogen <- clean_pathogen %>%
   filter(sci_name %notin% c('Desmidophorus concentricus', 
                             'Pseudomonas tumefaciens'))
 
-# remove these species
+# remove these species (5642)
 clean_pathogen <- clean_pathogen %>% 
-  filter(host %notin% c('Amaranthaceae', 
+  filter(sci_name %notin% c('REMOVE')) %>%
+  filter(host %notin% c('REMOVE',
+                        'Amaranthaceae', 
                         'Caryophyllaceae',
                         'Polygonaceae',
                         'Rajania cordata',
@@ -70,22 +78,21 @@ clean_pathogen <- clean_pathogen %>%
                         'Rosea sp.',
                         'Tovara japonica',
                         'Trommsdorffia maculata'))
+
+# get rid of old data
+rm(all_fams, fungi_key, plants_key, '%notin%')
 ```
 
 ```{r Split up into taxonomy levels}
-# Genus host, genus pathogen
-genus_genus <- clean_pathogen %>% separate(host, c('host', 'species') , sep = " ") %>% separate(sci_name, c('sci_name', 'species2') , sep = " ") %>%
-  select(-species, -species2) %>% distinct
+# Genus host, genus pathogen (1651)
+genus_genus <- clean_pathogen %>% separate(host, c('host', 'species') , sep = " ") %>% 
+  separate(sci_name, c('sci_name', 'species2') , sep = " ") %>%
+  select(-species, -species2) %>% distinct() %>% na.omit()
 
-# Genus host, species pathogen
-genus_species <- clean_pathogen %>% separate(host, c('host', 'species') , sep = " ") %>% filter(!grepl('sp.', sci_name)) %>% select(-species) %>% distinct()
+# Species host, species pathogen (3453)
+species_species <- clean_pathogen %>% filter(!grepl('sp.', host)) %>%
+  filter(!grepl('sp.', sci_name)) %>% distinct() %>% na.omit()
 
-# Species host, species pathogen
-species_species <- clean_pathogen %>% filter(!grepl('sp.', host)) %>% filter(!grepl('sp.', sci_name))%>% distinct()
-
-# Species host, genus pathogen
-species_genus <- clean_pathogen %>% filter(!grepl('sp.', host)) %>% filter(!grepl('sp.', sci_name)) %>% separate(sci_name, c('sci_name', 'species2') , sep = " ") %>%
-  select(-species2) %>%  distinct()
 ```
 
 ```{r Split up}
@@ -97,21 +104,42 @@ WOS_genus <- WOS_citations %>% separate(Host, c('host', 'species2') , sep = " ")
   summarize(WOS = sum(WOS)) # sum of WOS
 
 # Join WOS with other
-species_species <- full_join(species_species, WOS_species, by = "host")
-species_genus <- full_join(species_genus, WOS_species, by = "host")
-genus_species <- full_join(genus_species, WOS_genus, by = "host")
-genus_genus <- full_join(genus_genus, WOS_genus, by = "host")
+species_species <- left_join(species_species, WOS_species, by = "host") # 3453
+genus_genus <- left_join(genus_genus, WOS_genus, by = "host") # 1651 >1619 (117 genera)
 
 # Save the cleaned/corrected data
-save(genus_genus, genus_species, species_species, species_genus, file = "data/raw/clean_pathogen.rda")
+save(genus_genus, species_species, file = "data/raw/clean_pathogen.rda")
+
+# remove data
+rm(WOS_citations, WOS_species, WOS_genus)
+```
+
+```{r Phylogeny}
+# Read in data
+Phylogeny <- read_excel("data/phylo/Phylogeny.xlsx", col_names = FALSE)
+genera <- Phylogeny$...1
+
+# Temporary data set for transforming 
+tmp <- Phylogeny[,-1]
+colnames(tmp) <- rownames(tmp) <- genera
+tmp <- as.matrix(tmp)
+diag(tmp) <- 0
+tmp[upper.tri(tmp)] <- t(tmp)[upper.tri(tmp)] 
+
+# Make pairwise comparisons, 90 genera 4005 genera comparison
+xy <- t(combn(colnames(tmp), 2))
+phylogeny <- data.frame(xy, dist =  tmp[xy])
+colnames(phylogeny) <- c("host", "host2", "distance")
+save(phylogeny, file = "data/phylo/phylogeny.rda")
+
+# remove data 
+rm(Phylogeny, tmp, xy, genera)
 ```
 
 ```{r Cladogram}
 # Read in Data
 cladogram <- read_excel("data/phylo/cladogram.xlsx", sheet = "Sheet1") %>% clean_names() %>% select(-notes) %>% na.omit()
 
-# Load in clean data if needed
-load("data/clean_pathogen.rda")
 # split up into species genus
 justnames <- species_species %>% 
   separate(host, c('genus', 'species') , sep = " ") %>%
@@ -129,26 +157,6 @@ get_cladogram(data = phylo_dist, filename = "data/phylo/species.dist.rda", type 
 get_cladogram(data = phylo_dist, filename = "data/phylo/genus.dist.rda", type = "genus")
 ```
 
-```{r Phylogeny}
-# Read in data
-Phylogeny <- read_excel("data/phylo/Phylogeny.xlsx", col_names = FALSE)
-genera <- Phylogeny$...1
-
-# Temporary data set for transforming
-tmp <- Phylogeny[,-1]
-colnames(tmp) <- rownames(tmp) <- genera
-tmp <- as.matrix(tmp)
-diag(tmp) <- 0
-tmp[upper.tri(tmp)] <- t(tmp)[upper.tri(tmp)]
-
-# Make pairwise comparisons
-xy <- t(combn(colnames(tmp), 2))
-phylogeny <- data.frame(xy, dist =  tmp[xy])
-colnames(phylogeny) <- c("org1", "org2", "distance")
-save(phylogeny, file = "data/phylo/phylogeny.rda")
-
-```
-
 ```{r Create sharing index}
 # Load in clean data if needed
 load("data/raw/clean_pathogen.rda")
@@ -156,62 +164,34 @@ load("data/raw/clean_pathogen.rda")
 # Get pathogen sharing index
 get_sharing(data = genus_genus, path_to_save = "data/sharing/genus.sharing.rda")
 get_sharing(data = species_species, path_to_save = "data/sharing/species.sharing.rda")
-get_sharing(data = genus_species, path_to_save = "data/sharing/genus.sp.sharing.rda")
-get_sharing(data = species_genus, path_to_save = "data/sharing/species.gen.sharing.rda")
 ```
 
-```{r Join Species-Species}
+```{r Join Genera-Genera phylo}
 # Load in necessary files
 load("data/raw/clean_pathogen.rda")
-load("data/sharing/species.sharing.rda")
-load("data/phylo/species.dist.rda")
+load("data/sharing/genus.sharing.rda")
+load("data/phylo/phylogeny.rda")
 
-# name conversion for later
-species_species$org1 <- species_species$host
-
-# join distance to WOS, remove sci for later, create unique ID
-species_all <- full_join(distmat, species_species, by = "org1")
-species_all <- species_all %>% select(-host, -sci_name) %>%
+# join distance to WOS, remove sci for later, create unique ID (4005)
+genus_all <- left_join(phylogeny, genus_genus, by = "host")
+genus_all <- genus_all %>% select(-sci_name) %>%
+  mutate(ID = paste(host, host2, sep = "_")) %>%
   distinct() %>%
-  mutate(distance = as.numeric(distance)) %>%
-  mutate(ID = paste(org1, org2, sep = "_"))
+  mutate(distance = as.numeric(distance))
 
-# create unique ID in sharing file so we can join with rest of data
+# create unique ID in sharing file so we can join with rest of data (6903)
 sharing <- sharing %>%
   mutate(ID = paste(org1, org2, sep = "_"))
-id <- match(species_all$ID, sharing$ID)
-species_all$shared.org <- sharing$shared.org[id]
+id <- match(genus_all$ID, sharing$ID)
+genus_all$shared.org <- sharing$shared.org[id]
 
-# remove any NA's ( we dont have many)
-species_all <- na.omit(species_all)
-save(species_all, file = "data/final.species.rda")
-```
+# remove any NA's (4005)
+genus_all[is.na(genus_all)] <- 0 
+genus_all.p <- genus_all
+save(genus_all.p, file = "data/final.genus.p.rda")
 
-```{r Join Species-Genera}
-# Load in necessary files
-load("data/raw/clean_pathogen.rda")
-load("data/sharing/species.gen.sharing.rda")
-load("data/phylo/species.dist.rda")
-
-# name conversion for later
-species_genus$org1 <- species_genus$host
-
-# join distance to WOS, remove sci for later, create unique ID
-species_genus_all <- full_join(distmat, species_genus, by = "org1")
-species_genus_all <- species_genus_all %>% select(-host, -sci_name) %>%
-  distinct() %>%
-  mutate(distance = as.numeric(distance)) %>%
-  mutate(ID = paste(org1, org2, sep = "_"))
-
-# create unique ID in sharing file so we can join with rest of data
-sharing <- sharing %>%
-  mutate(ID = paste(org1, org2, sep = "_"))
-id <- match(species_genus_all$ID, sharing$ID)
-species_genus_all$shared.org <- sharing$shared.org[id]
-
-# remove any NA's ( we dont have many)
-species_genus_all <- na.omit(species_genus_all)
-save(species_genus_all, file = "data/final.species.gen.rda")
+# remove data
+rm(genus_all, phylogeny, sharing)
 ```
 
 ```{r Join Genera-Genera (clado)}
@@ -220,15 +200,12 @@ load("data/raw/clean_pathogen.rda")
 load("data/sharing/genus.sharing.rda")
 load("data/phylo/genus.dist.rda")
 
-# name conversion for later
-genus_genus$org1  <- genus_genus$host
-
 # join distance to WOS, remove sci for later, create unique ID (4186)
-genus_all <- left_join(distmat, genus_genus, by = "org1")
-genus_all <- genus_all %>% select(-host, -sci_name) %>%
+genus_all <- left_join(distmat, genus_genus, by = "host")
+genus_all <- genus_all %>% select(-sci_name) %>%
+  mutate(ID = paste(host, host2, sep = "_")) %>%
   distinct() %>%
-  mutate(distance = as.numeric(distance)) %>%
-  mutate(ID = paste(org1, org2, sep = "_"))
+  mutate(distance = as.numeric(distance))
 
 # create unique ID in sharing file so we can join with rest of data (6903)
 sharing <- sharing %>%
@@ -239,61 +216,36 @@ genus_all$shared.org <- sharing$shared.org[id]
 # remove any NA's (4063)
 genus_all <- na.omit(genus_all)
 save(genus_all, file = "data/final.genus.rda")
+
+# remove data
+rm(genus_all, distmat, sharing)
 ```
 
-```{r Join Genera-Genera phylo}
+```{r Join Species-Species clado}
 # Load in necessary files
 load("data/raw/clean_pathogen.rda")
-load("data/sharing/genus.sharing.rda")
-load("data/phylo/phylogeny.rda")
+load("data/sharing/species.sharing.rda")
+load("data/phylo/species.dist.rda")
 
-# name conversion for later
-genus_genus$org1  <- genus_genus$host
-
-# join distance to WOS, remove sci for later, create unique ID (4186)
-genus_all <- left_join(phylogeny, genus_genus, by = "org1")
-genus_all <- genus_all %>% select(-host, -sci_name) %>%
+# join distance to WOS, remove sci for later, create unique ID (425509)
+species_all <- full_join(distmat, species_species, by = "host")
+species_all <- species_all %>% select(-sci_name) %>%
+  mutate(ID = paste(host, host2, sep = "_")) %>%
   distinct() %>%
-  mutate(distance = as.numeric(distance)) %>%
-  mutate(ID = paste(org1, org2, sep = "_"))
+  mutate(distance = as.numeric(distance))
 
-# create unique ID in sharing file so we can join with rest of data (6903)
+# create unique ID in sharing file so we can join with rest of data
 sharing <- sharing %>%
   mutate(ID = paste(org1, org2, sep = "_"))
-id <- match(genus_all$ID, sharing$ID)
-genus_all$shared.org <- sharing$shared.org[id]
+id <- match(species_all$ID, sharing$ID)
+species_all$shared.org <- sharing$shared.org[id]
 
-# remove any NA's (4063)
-genus_all[is.na(genus_all)] <- 0 
-genus_all.p <- genus_all
-save(genus_all.p, file = "data/final.genus.p.rda")
-```
+# remove any NA's (425503)
+species_all <- na.omit(species_all)
+save(species_all, file = "data/final.species.rda")
 
-```{r Join Genera-Species}
-# Load in necessary files
-load("data/raw/clean_pathogen.rda")
-load("data/sharing/genus.sp.sharing.rda")
-load("data/phylo/genus.dist.rda")
-
-# name conversion for later
-genus_species$org1  <- genus_species$host
-
-# join distance to WOS, remove sci for later, create unique ID (4186)
-genus_species_all <- left_join(distmat, genus_species, by = "org1")
-genus_species_all <- genus_species_all %>% select(-host, -sci_name) %>%
-  distinct() %>%
-  mutate(distance = as.numeric(distance)) %>%
-  mutate(ID = paste(org1, org2, sep = "_"))
-
-# create unique ID in sharing file so we can join with rest of data (6105)
-sharing <- sharing %>%
-  mutate(ID = paste(org1, org2, sep = "_"))
-id <- match(genus_species_all$ID, sharing$ID)
-genus_species_all$shared.org <- sharing$shared.org[id]
-
-# remove any NA's (4135)
-genus_species_all <- na.omit(genus_species_all)
-save(genus_species_all, file = "data/final.genus.sp.rda")
+# remove data
+rm(species_all, distmat, sharing)
 ```
 
 ```{r Bins}
@@ -308,16 +260,15 @@ trophic_bins <- trophic_bins %>% select(sci_name, bin) %>%
 
 # Join in bin with other data
 bin_genus_genus <- left_join(trophic_bins, genus_genus, by = "sci_name")
-bin_genus_genus$org1  <- bin_genus_genus$host
 
-# join distance to WOS, remove sci for later, create unique ID (4186)
-bin_genus_all <- left_join(phylogeny, bin_genus_genus, by = "org1")
-bin_genus_all <- bin_genus_all %>% select(-host) %>%
+# join bins to pathogens (14815)
+bin_genus_all <- left_join(phylogeny, bin_genus_genus, by = "host")
+bin_genus_all <- bin_genus_all %>% select(-sci_name) %>%
+  mutate(ID = paste(host, host2, sep = "_")) %>%
   distinct() %>%
-  mutate(distance = as.numeric(distance)) %>%
-  mutate(ID = paste(org1, org2, sep = "_"))
+  mutate(distance = as.numeric(distance))
 
-# create unique ID in sharing file so we can join with rest of data (6903)
+# create unique ID in sharing file so we can join with rest of data (6789)
 sharing <- sharing %>%
   mutate(ID = paste(org1, org2, sep = "_"))
 id <- match(bin_genus_all$ID, sharing$ID)
@@ -330,7 +281,7 @@ bin_genus_all <- bin_genus_all %>% mutate(bin = case_when(
   (bin %in% c('N/H','H', 'B/H')) ~ 'Hemitrophic',
   (bin %in% c('I', 'S', 'M', 'E')) ~ 'Non-pathogenic'))
 
-save(bin_genus_all, file = "data/path/genus.rda")
+save(bin_genus_all, file = "data/genus.p.bin.rda")
 ```
 
 
