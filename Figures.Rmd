@@ -16,25 +16,22 @@ library(kableExtra)
 
 # Define color pallette
 mypal <- palette(brewer.pal(n = 10, name = "Set3"))
-binpal <- c('chartreuse4', 'gold', 'cornflowerblue', 'gray60')
+binpal <- c('limegreen', 'gold', 'royalblue', 'gray60')
 
 # Load in data
 load("data/final.genus.rda")
 load("data/final.species.rda")
 load("data/raw/clean_pathogen.rda")
 load("data/final.genus.p.rda")
+load("data/path/genus.rda")
 ```
 
 ```{r FIG1}
-# Load final data 
-load("data/path/genus.rda")
-
-binpal <- c('chartreuse4', 'gold', 'cornflowerblue', 'gray60')
 
 # Plot of all bins with individual slopes
 p1 <- bin_genus_all %>% 
   ggplot( aes(x = distance, y = shared.org))+
-  geom_point(aes(col = bin), alpha = 0.8)+
+  geom_point(aes(col = bin), alpha = 1, size = 3)+
   geom_smooth(aes(col = bin), method = "lm", se = FALSE, lwd = 0.7)+
   geom_smooth(method = "lm", se = FALSE, lwd = 0.5, col = "black", linetype = "dashed")+
   ggpubr::theme_pubr() +
@@ -64,46 +61,72 @@ spl <- with(bin_genus_all, split(bin_genus_all, list(bin = bin)))
 
 # nonpathogenic
 nonpathogenic.slr <- lm(shared.org ~ distance, data = spl[["Non-pathogenic"]])
+nonpathogenic.mlr <- lm(shared.org ~ distance + WOS, data = spl[["Non-pathogenic"]])
 nonpathogenic.coef <- c("Non-pathogenic", confint(nonpathogenic.slr)[2], as.numeric(coef(nonpathogenic.slr)[2]), confint(nonpathogenic.slr)[4])
-nonpathogenic.mlr <- c("Non-pathogenic", summary(lm(shared.org ~ distance + WOS, data = spl[["Non-pathogenic"]]))$coefficients[c(2, 11, 3, 12)])
+nonpathogenic.mlr.coef <- c("Non-pathogenic", confint(nonpathogenic.mlr)[2], # lower
+                            as.numeric(coef(nonpathogenic.mlr)[2]), #distance
+                            confint(nonpathogenic.mlr)[5], # upper
+                            summary(nonpathogenic.mlr)$coefficients[c(11, 6, 12)]) # p, WOS, p2
 
 # hemitrophic
 hemitrophic.slr <- lm(shared.org ~ distance, data = spl[["Hemitrophic"]])
+hemitrophic.mlr <- lm(shared.org ~ distance + WOS, data = spl[["Hemitrophic"]])
 hemitrophic.coef <- c("Hemitrophic", confint(hemitrophic.slr)[2], as.numeric(coef(hemitrophic.slr)[2]), confint(hemitrophic.slr)[4])
-hemitrophic.mlr <- c("Hemitrophic", summary(lm(shared.org ~ distance + WOS, data = spl[["Hemitrophic"]]))$coefficients[c(2, 11, 3, 12)])
+hemitrophic.mlr.coef <- c("Hemitrophic", confint(hemitrophic.mlr)[2], # lower
+                            as.numeric(coef(hemitrophic.mlr)[2]), #distance
+                            confint(hemitrophic.mlr)[5], # upper
+                            summary(hemitrophic.mlr)$coefficients[c(11, 6, 12)]) # p, WOS, p2
 
 # necrotrophic
 necrotrophic.slr <- lm(shared.org ~ distance, data = spl[["Necrotrophic"]])
+necrotrophic.mlr <- lm(shared.org ~ distance + WOS, data = spl[["Necrotrophic"]])
 necrotrophic.coef <- c("Necrotrophic", confint(necrotrophic.slr)[2], as.numeric(coef(necrotrophic.slr)[2]), confint(necrotrophic.slr)[4])
-necrotrophic.mlr <- c("Necrotrophic", summary(lm(shared.org ~ distance + WOS, data = spl[["Necrotrophic"]]))$coefficients[c(2, 11, 3, 12)])
+necrotrophic.mlr.coef <- c("Necrotrophic", confint(necrotrophic.mlr)[2], # lower
+                            as.numeric(coef(necrotrophic.mlr)[2]), #distance
+                            confint(necrotrophic.mlr)[5], # upper
+                            summary(necrotrophic.mlr)$coefficients[c(11, 6, 12)]) # p, WOS, p2
 
 # biotrophic
 biotrophic.slr <- lm(shared.org ~ distance, data = spl[["Biotrophic"]])
+biotrophic.mlr <- lm(shared.org ~ distance + WOS, data = spl[["Biotrophic"]])
 biotrophic.coef <- c("Biotrophic", confint(biotrophic.slr)[2],  as.numeric(coef(biotrophic.slr)[2]), confint(biotrophic.slr)[4])
-biotrophic.mlr <- c("Biotrophic", summary(lm(shared.org ~ distance + WOS, data = spl[["Biotrophic"]]))$coefficients[c(2, 11, 3, 12)])
+biotrophic.mlr.coef <- c("Biotrophic", confint(biotrophic.mlr)[2], # lower
+                            as.numeric(coef(biotrophic.mlr)[2]), #distance
+                            confint(biotrophic.mlr)[5], # upper
+                            summary(biotrophic.mlr)$coefficients[c(11, 6, 12)]) # p, WOS, p2
 
-# Join together coefficients
+# Join together slr coefficients
 slr.coefs <- rbind(nonpathogenic.coef, hemitrophic.coef, necrotrophic.coef, biotrophic.coef) %>% as.data.frame() 
 colnames(slr.coefs) <- c('bin', 'lower', 'distance', 'upper')
 slr.coefs <- slr.coefs %>% mutate(lower = as.numeric(substr(lower, 1, 5))) %>% 
   mutate(distance =  as.numeric(substr(distance, 1, 5))) %>% 
   mutate(upper =  as.numeric(substr(upper, 1, 5)))
+slr.coefs$mod <- "SLR"
+
+# join together mlr coefficients
+mlr.coefs <- rbind(nonpathogenic.mlr.coef, hemitrophic.mlr.coef, necrotrophic.mlr.coef, biotrophic.mlr.coef) %>% as.data.frame() 
+colnames(mlr.coefs) <- c('bin', 'lower', 'distance', 'upper', 'p', 'WOS', 'p2')
+mlr.coefs$mod <- "MLR"
+mlr.coefs <- mlr.coefs %>% mutate(lower = as.numeric(substr(lower, 1, 5))) %>% 
+  mutate(distance =  as.numeric(substr(distance, 1, 5))) %>% 
+  mutate(upper =  as.numeric(substr(upper, 1, 5)))
 
 # Coef plot + CI
-p2 <- ggplot(slr.coefs, aes(x = reorder(bin, distance), y = distance, col = as.factor(bin))) +
-  geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.5, size = 1) + 
-  geom_point(aes(x = reorder(bin, distance), y = distance), size = 5)+
+p2 <- rbind(slr.coefs, mlr.coefs[,c(1:4, 8)]) %>%
+ggplot(aes(x = reorder(bin, distance), y = distance, col = as.factor(bin))) +
+  geom_errorbar(aes(ymin = lower, ymax = upper, linetype = as.factor(mod)), position = "dodge", width = 0.5, size = 1) + 
+  #geom_point(aes(x = reorder(bin, distance), y = distance),  size = 5)+
   ggpubr::theme_pubr()+
   scale_colour_manual(values = binpal)+
-  labs(y = "Distance Coefficient", x = "Trophic Bin")+
+  labs(y = "Distance Coefficient", col = "Trophic Bin", linetype = "Model")+
   labs(title = "Pathogen sharing vs. Distance by trophic Bin")+
   theme(#plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
         axis.title.y = element_text(size = 12, face = "bold"),
-        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.title.x = element_blank(),
         axis.text.x = element_text(size = 12),
         axis.text.y = element_text(size = 12),
         plot.title = element_blank(),
-        legend.position = "none")
+        legend.position = "right")
 
 ggsave("figures/BIN/genus.coef.pdf",
        plot = p2,
@@ -111,12 +134,6 @@ ggsave("figures/BIN/genus.coef.pdf",
        width = 8,
        height = 3,
        useDingbats = FALSE)
-
-# Table 
-mlr.coefs <- rbind(nonpathogenic.mlr, hemitrophic.mlr, necrotrophic.mlr, biotrophic.mlr) %>% as.data.frame() 
-colnames(mlr.coefs) <- c('bin', 'distance', 'p', 'WOS', 'p2')
-mlr.coefs <- mlr.coefs %>% mutate(distance = as.numeric(substr(distance, 1, 5))) %>% 
-  mutate(WOS =  as.numeric(substr(WOS, 1, 5)))
 ```
 
 ```{r FIG1A}
@@ -128,7 +145,7 @@ genus_all$group = "Genus"
 species_all$group = "Species"
 
 p <- rbind(species_all, genus_all) %>% 
-  group_by(org1) %>% 
+  group_by(host) %>% 
   summarize(PSR = n(), WOS = WOS, group = group) %>%
   distinct() %>%
   ggplot(aes(x = log(WOS), y = log(PSR), col = group)) +
@@ -202,7 +219,7 @@ p1 <- species_all %>%
   geom_boxplot(aes(fill = as.factor(distance)))+
   theme_minimal()+
   scale_fill_manual(values = binpalex)+
-  labs(y = "Proportion Pathogens Shared", x = "Phylogenetic Distance")+
+  labs(y = "Proportion Pathogens Shared", x = "Taxonomic Distance")+
   labs(title = "Species")+
   theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
         axis.title.y = element_text(size = 12, face = "bold"),
@@ -226,7 +243,7 @@ p2 <- genus_all %>%
   geom_boxplot(aes(fill = as.factor(distance)))+
   theme_minimal()+
   scale_fill_manual(values = binpalex)+
-  labs(y = "Proportion Pathogens Shared", x = "Phylogenetic Distance")+
+  labs(y = "Proportion Pathogens Shared", x = "Taxonomic Distance")+
   labs(title = "Genus")+
   theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
         axis.title.y = element_text(size = 12, face = "bold"),
