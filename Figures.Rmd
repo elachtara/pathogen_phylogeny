@@ -27,7 +27,6 @@ load("data/path/genus.rda")
 ```
 
 ```{r FIG1}
-
 # Plot of all bins with individual slopes
 p1 <- bin_genus_all %>% 
   ggplot( aes(x = distance, y = shared.org))+
@@ -189,7 +188,7 @@ p2 <- rbind(species_species, genus_genus) %>%
   scale_colour_manual(values = binpal[2:3])+
   geom_smooth(aes(group = group), method = "lm", se = FALSE, size = 0.5)+
   theme_minimal()+
-  labs(y = "log(PSR)", x = "log(WOS Citations)", col = "taxonomy level")+
+  labs(y = "log(PSR)", x = "log(WOS Citations)", col = "Taxonomy Level")+
   labs(title = "WOS Citations vs PSR")+
   theme(#plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
         axis.title.y = element_text(size = 12, face = "bold"),
@@ -210,7 +209,7 @@ ggsave("figures/PSR/raw.both.pdf",
 
 #  Proportion vs. Distance Boxplots
 
-binpalex <- c('firebrick', 'chartreuse4', 'gold', 'cornflowerblue', 'gray60')
+binpalex <- c('firebrick',binpal)
 
 # Species plot
 p1 <- species_all %>% 
@@ -262,8 +261,7 @@ ggsave("figures/BOX/genus.pdf",
        useDingbats = FALSE)
 ```
 
-
-```{r FAM DIFF}
+```{r FAM }
 load("data/final.genus.p.rda")
 p <- genus_all.p %>%
   filter(hostfam != 0) %>%
@@ -273,7 +271,7 @@ p <- genus_all.p %>%
   facet_wrap(~ hostfam) +
   ggpubr::theme_pubr() +
   scale_colour_manual(values = binpal)+
-  labs(y = "Proportion Pathogens Shared", x = "Phylogenetic Distance", col = "Tropic Bin")+
+  labs(y = "Proportion Pathogens Shared", x = "Phylogenetic Distance", col = "family")+
   labs(title = "Pathogen sharing vs. Distance (Genus-Genus)")+
   theme(#plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
         axis.title.y = element_text(size = 12, face = "bold"),
@@ -284,10 +282,10 @@ p <- genus_all.p %>%
         plot.title = element_blank(),
         legend.position = "bottom")
 
-ggsave("figures/BIN/genus.pdf",
-       plot = p1,
+ggsave("figures/FAM/genus.pdf",
+       plot = p,
        units = "in",
-       width = 6,
+       width = 10,
        height = 6,
        useDingbats = FALSE)
 
@@ -336,6 +334,66 @@ ggsave("figures/FAM/genus.coef.pdf",
        height = 3,
        useDingbats = FALSE)
 ```
+
+```{r RES}
+# Residuals over search effort
+bin.slr <- lm(shared.org ~ distance, data = bin_genus_all)
+bin_genus_all$res <- resid(bin.slr)
+p <- ggplot(bin_genus_all, aes( x = WOS, y = res, col = bin ))+
+  geom_point(aes(col = bin), alpha = 1, size = 3)+
+  geom_hline(yintercept = 0)+
+  ggpubr::theme_pubr() +
+  scale_colour_manual(values = binpal)+
+  labs(y = "Residuals", x = "Search effort (citations)", col = "Tropic Bin")+
+  labs(title = "Residuals plot sharing ~ distance")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        legend.text = element_text(size = 8),
+        #plot.title = element_blank(),
+        #axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.position = "bottom")
+
+ggsave("figures/RES/WOS.pdf",
+       plot = p,
+       units = "in",
+       width = 6,
+       height = 6,
+       useDingbats = FALSE)
+
+
+# Residuals over distance
+bin.slr2 <- lm(shared.org ~ WOS, data = bin_genus_all)
+bin_genus_all$res2 <- resid(bin.slr2)
+p2 <-ggplot(bin_genus_all, aes( x = distance, y = res2, col = bin ))+
+  geom_point(aes(col = bin), alpha = 1, size = 3)+
+  geom_hline(yintercept = 0)+
+  ggpubr::theme_pubr() +
+  scale_colour_manual(values = binpal)+
+  labs(y = "Residuals", x = "Phylogenetic Distance", col = "Tropic Bin")+
+  labs(title = "Residuals plot sharing ~ search effort")+
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        legend.text = element_text(size = 8),
+        #plot.title = element_blank(),
+        #axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.position = "bottom")
+
+ggsave("figures/RES/distance.pdf",
+       plot = p2,
+       units = "in",
+       width = 6,
+       height = 6,
+       useDingbats = FALSE)
+```
+
 
 
 
