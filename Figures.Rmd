@@ -13,6 +13,7 @@ library(ggplot2)
 library(RColorBrewer)
 library(knitr)
 library(kableExtra)
+library(onls)
 
 # Define color pallette
 mypal <- palette(brewer.pal(n = 10, name = "Set3"))
@@ -261,7 +262,7 @@ ggsave("figures/BOX/genus.pdf",
        useDingbats = FALSE)
 ```
 
-```{r FAM }
+```{r FAM}
 load("data/final.genus.p.rda")
 p <- genus_all.p %>%
   filter(hostfam != 0) %>%
@@ -286,7 +287,7 @@ ggsave("figures/FAM/genus.pdf",
        plot = p,
        units = "in",
        width = 10,
-       height = 6,
+       height = 4,
        useDingbats = FALSE)
 
 # Split up data by fam
@@ -339,8 +340,9 @@ ggsave("figures/FAM/genus.coef.pdf",
 # Residuals over search effort
 bin.slr <- lm(shared.org ~ distance, data = bin_genus_all)
 bin_genus_all$res <- resid(bin.slr)
-p <- ggplot(bin_genus_all, aes( x = WOS, y = res, col = bin ))+
+p <-  ggplot(bin_genus_all, aes(x = log(WOS), y = res, col = bin ))+
   geom_point(aes(col = bin), alpha = 1, size = 3)+
+  geom_smooth(aes(col = bin), method = "lm", se = FALSE, lwd = 0.7)+
   geom_hline(yintercept = 0)+
   ggpubr::theme_pubr() +
   scale_colour_manual(values = binpal)+
@@ -368,9 +370,10 @@ ggsave("figures/RES/WOS.pdf",
 # Residuals over distance
 bin.slr2 <- lm(shared.org ~ WOS, data = bin_genus_all)
 bin_genus_all$res2 <- resid(bin.slr2)
-p2 <-ggplot(bin_genus_all, aes( x = distance, y = res2, col = bin ))+
+p2 <- ggplot(bin_genus_all, aes( x = distance, y = res2, col = bin ))+
   geom_point(aes(col = bin), alpha = 1, size = 3)+
   geom_hline(yintercept = 0)+
+  geom_smooth(aes(col = bin), method = "lm", se = FALSE, lwd = 0.7)+
   ggpubr::theme_pubr() +
   scale_colour_manual(values = binpal)+
   labs(y = "Residuals", x = "Phylogenetic Distance", col = "Tropic Bin")+
@@ -429,10 +432,22 @@ bin_genus_all %>% group_by(sci_name, bin) %>%
   summarize(numhost = n(), distance = distance, ID = ID) %>%
   filter(numhost > 1) %>% # only want it with 1+ hosts
   group_by(bin) %>%
-  summarize(mediandist = median(distance))
+  summarize(mediandist = mean(distance))
 
 ```
 
+```{r ORTHOG}
+# Split data into bins
+spl <- with(bin_genus_all, split(bin_genus_all, list(bin = bin)))
+
+# nonpathogenic
+nonpathogenic <- spl[["Non-pathogenic"]]
+DNase1 <- subset(DNase, Run == 1)
+DNase1$density <- sapply(DNase1$density, function(x) rnorm(1, x, 0.1 * x))
+
+mod1 <- onls(shared.org ~ Asym/(1 + exp((xmid - distance/scal)),
+                                 data = nonpathogenic, start = list(Asym = 3, xmid = 0, scal = 1))
+```
 
 
 
@@ -497,84 +512,6 @@ ggsave("figures/DOT/genus.mod.pdf",
        units = "in",
        width = 6,
        height = 6,
-       useDingbats = FALSE)
-```
-
-```{r Trophic Bin}
-# Update trophic bins to be less specific
-bin_genus_all <- bin_genus_all %>% mutate(bin = case_when(
-  (bin == 'N') ~ 'Necrotrophic',
-  (bin == 'B') ~ 'Biotrophic',
-  (bin %in% c('N/H','H', 'B/H')) ~ 'Hemitrophic',
-  (bin %in% c('I', 'S', 'M', 'E')) ~ 'Non-pathogenic'))
-
-#green (biotrophic),'forestgreen'
-# yellow/orange ("hemibiotrophic") 'gold'
-# and blue (necrotrophic) 'dodgerblue'
-# grey (other) 'gray60'
-mypal <- c('chartreuse4', 'gold', 'cornflowerblue', 'gray60')
-
-p1 <- bin_genus_all %>% 
-  ggplot( aes(x = distance, y = shared.org))+
-  geom_point(aes(col = bin), alpha = 0.8)+
-  geom_smooth(aes(col = bin), method = "lm", se = FALSE, lwd = 0.7)+
-  geom_smooth(method = "lm", se = FALSE, lwd = 0.5, col = "black", linetype = "dashed")+
-  ggpubr::theme_pubr() +
-  scale_colour_manual(values = mypal)+
-  labs(y = "Proportion Pathogens Shared", x = "Phylogenetic Distance", col = "Tropic Bin")+
-  labs(title = "Pathogen sharing vs. Distance (Genus-Genus)")+
-  theme(#plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-        axis.title.y = element_text(size = 12, face = "bold"),
-        axis.title.x = element_text(size = 12, face = "bold"),
-        axis.text.x = element_text(size = 12),
-        axis.text.y = element_text(size = 12),
-        legend.text = element_text(size = 8),
-        plot.title = element_blank(),
-        #axis.title.x = element_blank(),
-        #axis.title.y = element_blank(),
-        legend.position = "bottom")
-
-ggsave("figures/BIN/genus.pdf",
-       plot = p1,
-       units = "in",
-       width = 6,
-       height = 6,
-       useDingbats = FALSE)
-
-# Get coefficients by bin
-spl <- with(bin_genus_all, split(bin_genus_all, list(bin = bin)))
-
-coefLM <- function(x) {
-  mod <- lm(shared.org ~ distance, data = x)
-  c(summary(mod)$coefficients[2], summary(mod)$coefficients[8])
-}
-
-coefs <- sapply(spl, coefLM) %>% t() %>%  as.data.frame() %>% tibble::rownames_to_column() 
-colnames(coefs) <- c('bin', 'coef', 'p')
-#coefs$bin <-stringr::str_replace(rownames(coefs), ".distance", "")
-
-p2 <- coefs %>% 
-  ggplot(aes(x = reorder(bin, coef), y = coef, fill = as.factor(bin))) +
-  geom_bar(stat = "identity", color = "black", 
-           position = position_dodge()) +
-  theme_minimal()+
-  geom_text(aes(label = round(coef, 3)), vjust = -1)+
-  scale_fill_manual(values = mypal)+
-  labs(y = "Distance Coefficient", x = "Trophic Bin")+
-  labs(title = "Pathogen sharing vs. Distance by trophic Bin")+
-  theme(#plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-        axis.title.y = element_text(size = 12, face = "bold"),
-        axis.title.x = element_text(size = 12, face = "bold"),
-        axis.text.x = element_text(size = 12, face = "bold"),
-        axis.text.y = element_text(size = 12, face = "bold"),
-        plot.title = element_blank(),
-        legend.position = "none")
-
-ggsave("figures/BIN/genus.coef.pdf",
-       plot = p2,
-       units = "in",
-       width = 8,
-       height = 3,
        useDingbats = FALSE)
 ```
 
@@ -692,7 +629,6 @@ ggsave("figures/DIS/genus.sp.pdf",
        height = 6,
        useDingbats = FALSE)
 ```
-
 
 ```{r Tables}
 # tbl1
